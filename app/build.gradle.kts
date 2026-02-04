@@ -1,9 +1,17 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
 }
 
 android {
@@ -23,8 +31,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_KEY", localProperties.getProperty("API_KEY_DEBUG", "\"\""))
+        }
         release {
-            isMinifyEnabled = false
+            buildConfigField("String", "API_KEY", localProperties.getProperty("API_KEY_RELEASE", "\"\""))
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -37,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
