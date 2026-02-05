@@ -1,0 +1,38 @@
+package com.iliaziuzin.exchangeratechecker.data.repository
+
+import com.iliaziuzin.exchangeratechecker.data.local.FavoriteCurrencyPairDao
+import com.iliaziuzin.exchangeratechecker.data.toFavoriteCurrenciesPair
+import com.iliaziuzin.exchangeratechecker.data.toFavoriteCurrencyPairEntity
+import com.iliaziuzin.exchangeratechecker.domain.models.FavoriteCurrenciesPair
+import com.iliaziuzin.exchangeratechecker.domain.repository.FavoriteRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+
+class FavoriteRepositoryImpl @Inject constructor(
+    private val dao: FavoriteCurrencyPairDao
+) : FavoriteRepository {
+
+    override fun getFavorites(): Flow<List<FavoriteCurrenciesPair>> {
+        return dao.getAll()
+            .flowOn(Dispatchers.IO)
+            .map { list ->
+                list.map { entity -> entity.toFavoriteCurrenciesPair() }
+            }
+    }
+
+    override suspend fun addFavorite(pair: FavoriteCurrenciesPair) {
+        withContext(Dispatchers.IO) {
+            dao.insert(pair.toFavoriteCurrencyPairEntity())
+        }
+    }
+
+    override suspend fun removeFavorite(pair: FavoriteCurrenciesPair) {
+        withContext(Dispatchers.IO) {
+            dao.delete(pair.toFavoriteCurrencyPairEntity())
+        }
+    }
+}

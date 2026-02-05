@@ -1,10 +1,11 @@
 package com.iliaziuzin.exchangeratechecker.data.repository
 
-import com.iliaziuzin.exchangeratechecker.data.remote.CurrencyCode
-import com.iliaziuzin.exchangeratechecker.data.remote.LatestRatesResponse
-import com.iliaziuzin.exchangeratechecker.data.remote.SymbolsResponse
+import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyCode
+import com.iliaziuzin.exchangeratechecker.domain.models.ExchangeRate
 import com.iliaziuzin.exchangeratechecker.domain.repository.CurrencyRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
@@ -184,8 +185,6 @@ class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
         "ZWL" to "Zimbabwean Dollar"
     )
 
-
-
     private val rates = mapOf<CurrencyCode, Map<CurrencyCode, Double>>(
         "USD" to mapOf("EUR" to 0.847665, "RUB" to 76.124707, "GBP" to 0.79),
         "EUR" to mapOf("USD" to 0.847665, "RUB" to 76.124707, "GBP" to 0.79),
@@ -193,21 +192,14 @@ class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
 
     )
 
-
-
-    override suspend fun getSymbols(): SymbolsResponse {
+    override suspend fun getSymbols(): Flow<Map<CurrencyCode, String>> = flow {
         delay(1000)
-        return SymbolsResponse(success = true, symbols = symbols)
+        emit(symbols)
     }
 
-    override suspend fun getLatestRates(base: CurrencyCode?, symbols: String?): LatestRatesResponse {
+    override suspend fun getLatestRates(base: CurrencyCode?, symbols: String?): Flow<Map<CurrencyCode, ExchangeRate>> = flow {
         delay(1000)
-        return LatestRatesResponse(
-            success = true,
-            timestamp = System.currentTimeMillis() / 1000,
-            base = base ?: "USD",
-            date = "2024-01-01",
-            rates = rates[base] ?: emptyMap()
-        )
+        val ratesToReturn = rates[base] ?: emptyMap()
+        emit(ratesToReturn)
     }
 }
