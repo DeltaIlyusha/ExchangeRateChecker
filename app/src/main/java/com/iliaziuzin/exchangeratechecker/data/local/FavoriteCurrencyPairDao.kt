@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.Flow
 interface FavoriteCurrencyPairDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(pair: FavoriteCurrencyPair)
+    suspend fun insert(pair: FavoriteCurrencyPairEntity)
 
     @Delete
-    suspend fun delete(pair: FavoriteCurrencyPair)
+    suspend fun delete(pair: FavoriteCurrencyPairEntity)
 
     @Query("SELECT * FROM favorite_currency_pairs ORDER BY `from` ASC, `to` ASC")
-    fun getAll(): Flow<List<FavoriteCurrencyPair>>
+    fun getAll(): Flow<List<FavoriteCurrencyPairEntity>>
 }

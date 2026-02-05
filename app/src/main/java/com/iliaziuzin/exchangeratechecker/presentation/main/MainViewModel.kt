@@ -2,7 +2,7 @@ package com.iliaziuzin.exchangeratechecker.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.iliaziuzin.exchangeratechecker.data.local.FavoriteCurrencyPair
+import com.iliaziuzin.exchangeratechecker.data.local.FavoriteCurrencyPairEntity
 import com.iliaziuzin.exchangeratechecker.domain.usecase.AddFavoriteUseCase
 import com.iliaziuzin.exchangeratechecker.domain.usecase.GetFavoritesUseCase
 import com.iliaziuzin.exchangeratechecker.domain.usecase.GetLatestRatesUseCase
@@ -76,13 +76,13 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun addFavorite(pair: FavoriteCurrencyPair) {
+    fun addFavorite(pair: FavoriteCurrencyPairEntity) {
         viewModelScope.launch {
             addFavoriteUseCase(pair)
         }
     }
 
-    fun removeFavorite(pair: FavoriteCurrencyPair) {
+    fun removeFavorite(pair: FavoriteCurrencyPairEntity) {
         viewModelScope.launch {
             removeFavoriteUseCase(pair)
         }
@@ -94,7 +94,7 @@ data class MainUiState(
     val isLoadingRates: Boolean = false,
     val symbols: Map<String, String> = emptyMap(),
     val rates: Map<String, Double> = emptyMap(),
-    val favorites: List<FavoriteCurrencyPair> = emptyList(),
+    val favorites: List<FavoriteCurrencyPairEntity> = emptyList(),
     val error: String? = null,
     val sortOption: SortOption = SortOption.NAME_ASC
 )

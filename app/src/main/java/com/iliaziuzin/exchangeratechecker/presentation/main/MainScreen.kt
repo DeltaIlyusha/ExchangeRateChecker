@@ -2,6 +2,7 @@ package com.iliaziuzin.exchangeratechecker.presentation.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -9,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,14 +22,14 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    var tabIndex by remember { mutableStateOf(0) }
+    var tabIndex by rememberSaveable { mutableIntStateOf(0) }
     val tabs = listOf("Currencies", "Favorites")
     val navController = rememberNavController()
 
     Scaffold(
-        topBar = {
+        bottomBar = {
             Column {
-                TabRow(selectedTabIndex = tabIndex) {
+                PrimaryTabRow (selectedTabIndex = tabIndex) {
                     tabs.forEachIndexed { index, title ->
                         Tab(text = { Text(title) },
                             selected = tabIndex == index,
@@ -45,7 +46,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                         composable("currencies") {
                             CurrenciesScreen(
                                 uiState = uiState,
-                                onAddFavorite = viewModel::addFavorite,
+                                onFavoriteClick = viewModel::addFavorite,
                                 onSortClick = { navController.navigate("filters") }
                             )
                         }

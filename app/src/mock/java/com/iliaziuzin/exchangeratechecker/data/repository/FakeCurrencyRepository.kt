@@ -184,17 +184,16 @@ class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
         "ZWL" to "Zimbabwean Dollar"
     )
 
-    private val rates = mapOf(
-        "AED" to 3.6725,
-        "AFN" to 72.5,
-        "ALL" to 93.5,
-        "AMD" to 387.5,
-        "USD" to 1.0,
-        "GBP" to 0.79,
-        "EUR" to 0.847665,
-        "JPY" to 157.079057,
-        "RUB" to 76.124707
+
+
+    private val rates = mapOf<CurrencyCode, Map<CurrencyCode, Double>>(
+        "USD" to mapOf("EUR" to 0.847665, "RUB" to 76.124707, "GBP" to 0.79),
+        "EUR" to mapOf("USD" to 0.847665, "RUB" to 76.124707, "GBP" to 0.79),
+        "RUB" to mapOf("USD" to 0.847665, "EUR" to 76.124707, "GBP" to 0.79),
+
     )
+
+
 
     override suspend fun getSymbols(): SymbolsResponse {
         delay(1000)
@@ -208,7 +207,7 @@ class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
             timestamp = System.currentTimeMillis() / 1000,
             base = base ?: "USD",
             date = "2024-01-01",
-            rates = rates
+            rates = rates[base] ?: emptyMap()
         )
     }
 }

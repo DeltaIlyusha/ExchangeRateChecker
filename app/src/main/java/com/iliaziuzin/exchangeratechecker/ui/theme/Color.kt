@@ -9,3 +9,17 @@ val Pink80 = Color(0xFFEFB8C8)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
+
+
+val MainPrimary = Color(0xFF0A2FA7)
+val MainLightPrimary = Color(0xFFDEE4F8)
+val MainOnPrimary = Color(0xFFFFFFFF)
+val MainSecondary = Color(0xFF9DACDC)
+val MainTextDefault = Color(0xFF343138)
+val MainTextSecondary = Color(0xFF767676)
+val MainOutline = Color(0xFFEBEBEB)
+val MainYellow = Color(0xFFFFB800)
+
+val BgDefault = Color(0xFFFFFFFF)
+val BgHeader = Color(0xFFF6F6F6)
+val BgCard = Color(0xFFF0F2F8)
