@@ -42,6 +42,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        create("mock") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".mock"
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -80,6 +84,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization.converter)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp.logging.interceptor)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

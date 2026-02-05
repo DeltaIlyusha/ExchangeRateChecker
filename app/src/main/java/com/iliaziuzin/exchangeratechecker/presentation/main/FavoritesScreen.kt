@@ -9,6 +9,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iliaziuzin.exchangeratechecker.data.local.FavoriteCurrencyPair
 
@@ -28,4 +29,18 @@ fun FavoritesScreen(uiState: MainUiState, onRemoveFavorite: (FavoriteCurrencyPai
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FavoritesScreenPreview() {
+    FavoritesScreen(
+        uiState = MainUiState(
+            favorites = listOf(
+                FavoriteCurrencyPair("USD", "EUR"),
+                FavoriteCurrencyPair("GBP", "JPY")
+            )
+        ),
+        onRemoveFavorite = {}
+    )
 }

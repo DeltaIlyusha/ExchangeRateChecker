@@ -10,6 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iliaziuzin.exchangeratechecker.data.local.FavoriteCurrencyPair
 
@@ -52,4 +53,25 @@ fun CurrenciesScreen(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CurrenciesScreenPreview() {
+    CurrenciesScreen(
+        uiState = MainUiState(
+            symbols = mapOf(
+                "USD" to "United States Dollar",
+                "EUR" to "Euro",
+                "JPY" to "Japanese Yen"
+            ),
+            rates = mapOf(
+                "USD" to 1.0,
+                "EUR" to 0.9,
+                "JPY" to 130.0
+            )
+        ),
+        onAddFavorite = {},
+        onSortClick = {}
+    )
 }
