@@ -1,13 +1,11 @@
-/*
 package com.iliaziuzin.exchangeratechecker.presentation.main
 
-import com.iliaziuzin.exchangeratechecker.domain.usecase.RemoveFavoriteUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iliaziuzin.exchangeratechecker.domain.usecase.AddFavoriteUseCase
 import com.iliaziuzin.exchangeratechecker.domain.usecase.GetCurrenciesUseCase
-import com.iliaziuzin.exchangeratechecker.domain.usecase.GetFavoritesWithLatestRatesUseCase
 import com.iliaziuzin.exchangeratechecker.domain.usecase.GetLatestRatesForCurrencyUseCase
+import com.iliaziuzin.exchangeratechecker.domain.usecase.RemoveFavoriteUseCase
 import com.iliaziuzin.exchangeratechecker.mappers.toCurrencyExchangePairItem
 import com.iliaziuzin.exchangeratechecker.mappers.toFavoriteCurrenciesPair
 import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
@@ -32,20 +30,18 @@ enum class SortOption(val displayName: String) {
 }
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class CurrenciesViewModel @Inject constructor(
     private val getCurrenciesUseCase: GetCurrenciesUseCase,
-    private val getFavoritesWithLatestRatesUseCase: GetFavoritesWithLatestRatesUseCase,
     private val getLatestRatesForCurrency: GetLatestRatesForCurrencyUseCase,
     private val addFavoriteUseCase: AddFavoriteUseCase,
     private val removeFavoriteUseCase: RemoveFavoriteUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MainUiState())
+    private val _uiState = MutableStateFlow(CurrenciesUiState())
     val uiState = _uiState.asStateFlow()
 
     private val _errorFlow = MutableSharedFlow<String>()
     val errorFlow = _errorFlow.asSharedFlow()
-
 
     init {
         loadAvailableCurrencies()
@@ -77,18 +73,6 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    var loadRatesForFavoritesJob: Job? = null
-    private fun loadRatesForFavorites() {
-        loadRatesForFavoritesJob?.cancel()
-        loadRatesForFavoritesJob = getFavoritesWithLatestRatesUseCase().onEach { favorites ->
-            _uiState.update { it.copy(isLoading = false, favorites = favorites.map { favorite -> favorite.toCurrencyExchangePairItem() }) }
-        }.catch { e ->
-            _uiState.update { it.copy(isLoading = false) }
-            e.message?.let { _errorFlow.emit(it) }
-        }.launchIn(viewModelScope)
-    }
-
-
     var loadRatesForCurrenciesJob: Job? = null
 
     private fun loadRatesForCurrencies(baseCurrency: String) {
@@ -99,7 +83,6 @@ class MainViewModel @Inject constructor(
                 val sortedList = sortList(unsortedList, currentState.sortOption)
                 currentState.copy(isLoading = false, currencyExchangePairs = sortedList)
             }
-            loadRatesForFavorites()
         }.catch { e ->
             _uiState.update { it.copy(isLoading = false) }
             e.message?.let { _errorFlow.emit(it) }
@@ -124,13 +107,7 @@ class MainViewModel @Inject constructor(
                     it
                 }
             }
-
-            val updatedFavPairs = currentState.favorites.toMutableList()
-            if (pair.isFavorite) {
-                updatedFavPairs.removeIf { it.key == pair.key }
-            }
-
-            currentState.copy(currencyExchangePairs = updatedPairs, favorites = updatedFavPairs)
+            currentState.copy(currencyExchangePairs = updatedPairs)
         }
 
         if (pair.isFavorite) {
@@ -153,12 +130,10 @@ class MainViewModel @Inject constructor(
     }
 }
 
-data class MainUiState(
+data class CurrenciesUiState(
     val isLoading: Boolean = true,
     val currencySymbols:List<String> = emptyList(),
     val selectedCurrency:String = "EUR",
     val currencyExchangePairs: List<UiCurrencyExchangePair> = emptyList(),
-    val favorites: List<UiCurrencyExchangePair> = emptyList(),
     val sortOption: SortOption = SortOption.CODE_AZ
 )
-*/

@@ -1,3 +1,4 @@
+
 import java.util.Properties
 
 plugins {
@@ -69,6 +70,8 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -83,3 +86,4 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+

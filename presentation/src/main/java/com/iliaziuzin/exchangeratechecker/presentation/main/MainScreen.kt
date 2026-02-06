@@ -17,13 +17,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -35,10 +33,9 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
 import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Secondary
 import com.iliaziuzin.exchangeratechecker.ui.theme.TextDefault
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
+fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -50,12 +47,6 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     )
 
     val showBottomBar = tabs.any { it.second == currentRoute }
-
-    LaunchedEffect(Unit) {
-        viewModel.errorFlow.collectLatest { error ->
-            snackbarHostState.showSnackbar(message = error, actionLabel = "Dismiss")
-        }
-    }
 
     ExchangeRateCheckerTheme {
         Scaffold(
@@ -112,7 +103,11 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                 }
             }
         ) { innerPadding ->
-           AppNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
+           AppNavHost(
+               navController = navController, 
+               snackbarHostState = snackbarHostState, 
+               modifier = Modifier.padding(innerPadding)
+           )
         }
     }
 }

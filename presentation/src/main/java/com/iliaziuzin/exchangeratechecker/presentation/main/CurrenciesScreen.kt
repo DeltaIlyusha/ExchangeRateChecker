@@ -65,11 +65,12 @@ import kotlin.math.roundToInt
 @Composable
 fun CurrenciesScreen(
     modifier: Modifier = Modifier,
-    uiState: MainUiState,
+    uiState: CurrenciesUiState,
     onFavoriteClick: (UiCurrencyExchangePair) -> Unit,
     onSortClick: () -> Unit,
     onCurrencySelected: (String) -> Unit
 ) {
+
     Scaffold(modifier = modifier.background(MaterialTheme.colorScheme.BackgroundDefault)) { paddingValues ->
         Column(modifier = Modifier.fillMaxSize()) {
             CurrenciesHeader(
@@ -93,7 +94,7 @@ fun CurrenciesScreen(
                             .wrapContentSize(),
                         trackColor = MaterialTheme.colorScheme.Primary,
 
-                    )
+                        )
                 }
             } else {
                 LazyColumn(
@@ -111,144 +112,148 @@ fun CurrenciesScreen(
                     }
                 }
             }
-         }
         }
     }
+}
 
 
 @Composable
-fun CurrenciesHeader(modifier: Modifier = Modifier,
-                     selectedCurrency:String,
-                     currencySymbols:List<String>,
-                     onSortClick: () -> Unit,
-                     onCurrencySelected: (String) -> Unit
-                     ) {
-        Box(
-            Modifier.background(MaterialTheme.colorScheme.BackgroundHeader)
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "Currencies",
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 10.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
+fun CurrenciesHeader(
+    modifier: Modifier = Modifier,
+    selectedCurrency: String,
+    currencySymbols: List<String>,
+    onSortClick: () -> Unit,
+    onCurrencySelected: (String) -> Unit
+) {
+    Box(
+        Modifier.background(MaterialTheme.colorScheme.BackgroundHeader)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "Currencies",
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 10.dp),
+                style = MaterialTheme.typography.titleLarge
+            )
 
-                Row(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                var expanded by remember { mutableStateOf(false) }
+                var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
+                var textFieldPosition by remember { mutableStateOf(IntOffset.Zero) }
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        .weight(1f)
+                        .onSizeChanged {
+                            textFieldSize = it
+                        }
+                        .onGloballyPositioned {
+                            val positionInWindow = it.positionInWindow()
+                            textFieldPosition = IntOffset(positionInWindow.x.roundToInt(), positionInWindow.y.roundToInt())
+                        }
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { expanded = !expanded }
+                        ),
+                    contentAlignment = Alignment.TopStart
+
                 ) {
-                    var expanded by remember { mutableStateOf(false) }
-                    var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
-                    var textFieldPosition by remember { mutableStateOf(IntOffset.Zero) }
-                    Box(
+                    OutlinedTextField(
+                        value = selectedCurrency,
+                        textStyle = MaterialTheme.typography.bodySmall,
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false,
+                        trailingIcon = {
+                            if (!expanded) {
+                                Icon(
+                                    painter = painterResource(R.drawable.icon_arrow_down),
+                                    contentDescription = "Currencies dropdown",
+                                )
+                            }
+                        },
                         modifier = Modifier
-                            .weight(1f)
-                            .onSizeChanged {
-                                textFieldSize = it
-                            }
-                            .onGloballyPositioned {
-                                val positionInWindow = it.positionInWindow()
-                                textFieldPosition = IntOffset(positionInWindow.x.roundToInt(), positionInWindow.y.roundToInt())
-                            }
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = { expanded = !expanded }
-                            ),
-                        contentAlignment = Alignment.TopStart
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                            disabledContainerColor = Color.Transparent,
+                            disabledBorderColor = MaterialTheme.colorScheme.Secondary,
+                            disabledTrailingIconColor = MaterialTheme.colorScheme.Primary
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
+                    PositionedDropdownMenu(
+                        modifier = Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault).heightIn(max = 216.dp),
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        anchorSize = textFieldSize,
+                        anchorPosition = textFieldPosition
                     ) {
-                        OutlinedTextField(
-                            value = selectedCurrency,
-                            textStyle = MaterialTheme.typography.bodySmall,
-                            onValueChange = {},
-                            readOnly = true,
-                            enabled = false,
-                            trailingIcon = {
-                                if (!expanded) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.icon_arrow_down),
-                                        contentDescription = "Currencies dropdown",
-                                    )
-                                }
-                                },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                                disabledContainerColor = Color.Transparent,
-                                disabledBorderColor = MaterialTheme.colorScheme.Secondary,
-                                disabledTrailingIconColor = MaterialTheme.colorScheme.Primary
-                            ),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-
-                        PositionedDropdownMenu(
-                            modifier = Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault).heightIn(max = 216.dp),
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            anchorSize = textFieldSize,
-                            anchorPosition = textFieldPosition
-                        ) {
-                            Column {
-                                currencySymbols.fastForEachIndexed { index, symbol ->
-                                    DropdownMenuItem(
-                                        modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundDefault),
-                                        trailingIcon = {
-                                            if (index == 0) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.icon_arrow_up),
-                                                    tint = MaterialTheme.colorScheme.Primary,
-                                                    contentDescription = "Dropdown icon",
-                                                ) }
-                                            },
-                                        text = {
-                                            Text(
-                                                modifier = Modifier.padding(start = 4.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
-                                                text = symbol,
-                                                style = MaterialTheme.typography.bodySmall,
+                        Column {
+                            currencySymbols.fastForEachIndexed { index, symbol ->
+                                DropdownMenuItem(
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundDefault),
+                                    trailingIcon = {
+                                        if (index == 0) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.icon_arrow_up),
+                                                tint = MaterialTheme.colorScheme.Primary,
+                                                contentDescription = "Dropdown icon",
                                             )
-                                        },
-                                        onClick = {
-                                            onCurrencySelected(symbol)
-                                            expanded = false
                                         }
-                                    )
-                                }
+                                    },
+                                    text = {
+                                        Text(
+                                            modifier = Modifier.padding(start = 4.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
+                                            text = symbol,
+                                            style = MaterialTheme.typography.bodySmall,
+                                        )
+                                    },
+                                    onClick = {
+                                        onCurrencySelected(symbol)
+                                        expanded = false
+                                    }
+                                )
                             }
                         }
                     }
-                    OutlinedIconButton(
-                        modifier = Modifier.size(48.dp),
-                        onClick = onSortClick,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.Secondary),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.icon_filters),
-                            contentDescription = "Sort currencies",
-                            tint = MaterialTheme.colorScheme.Primary
-                        )
-                    }
                 }
-                Spacer(modifier = Modifier
+                OutlinedIconButton(
+                    modifier = Modifier.size(48.dp),
+                    onClick = onSortClick,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.Secondary),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.icon_filters),
+                        contentDescription = "Sort currencies",
+                        tint = MaterialTheme.colorScheme.Primary
+                    )
+                }
+            }
+            Spacer(
+                modifier = Modifier
                     .fillMaxWidth()
                     .size(1.dp)
-                    .background(color = MaterialTheme.colorScheme.Outline))
-            }
-
+                    .background(color = MaterialTheme.colorScheme.Outline)
+            )
         }
+
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun CurrenciesScreenPreview() {
     CurrenciesScreen(
-        uiState = MainUiState(
+        uiState = CurrenciesUiState(
             isLoading = true,
             currencySymbols = listOf("USD", "EUR", "RUB"),
             currencyExchangePairs = listOf(

@@ -26,7 +26,7 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
 import java.text.DecimalFormat
 
 @Composable
-fun FavoritesScreen(modifier:Modifier = Modifier, uiState: MainUiState, onRemoveFavorite: (UiCurrencyExchangePair) -> Unit) {
+fun FavoritesScreen(modifier:Modifier = Modifier, uiState: FavoritesUiState, onFavoriteClick: (UiCurrencyExchangePair) -> Unit) {
     Column(modifier = modifier.fillMaxSize()) {
         SimpleScreenHeader(
             title = "Favorites"
@@ -60,7 +60,7 @@ fun FavoritesScreen(modifier:Modifier = Modifier, uiState: MainUiState, onRemove
                         code = "${item.from}/${item.to}",
                         rate = decimalFormat.format(item.rate),
                         isFavorite = item.isFavorite,
-                        onFavoriteClick = { onRemoveFavorite(item) }
+                        onFavoriteClick = { onFavoriteClick(item) }
                     )
                 }
             }
@@ -72,12 +72,13 @@ fun FavoritesScreen(modifier:Modifier = Modifier, uiState: MainUiState, onRemove
 @Composable
 fun FavoritesScreenPreview() {
     FavoritesScreen(
-        uiState = MainUiState(
+        uiState = FavoritesUiState(
+            isLoading = false,
             favorites = listOf(
                 UiCurrencyExchangePair("USD", "RUB", 1.0, true, "USDRUB"),
                 UiCurrencyExchangePair("EUR", "USD", 1.0, true, "EURUSD")
             )
         ),
-        onRemoveFavorite = {}
+        onFavoriteClick = {}
     )
 }
