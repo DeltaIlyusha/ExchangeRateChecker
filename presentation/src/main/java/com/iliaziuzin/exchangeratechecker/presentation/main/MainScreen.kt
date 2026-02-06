@@ -13,12 +13,17 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -27,12 +32,14 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundDefault
 import com.iliaziuzin.exchangeratechecker.ui.theme.ExchangeRateCheckerTheme
 import com.iliaziuzin.exchangeratechecker.ui.theme.LightPrimary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val tabs = listOf(
         "Currencies" to AppDestinations.CURRENCIES_ROUTE,
@@ -41,8 +48,15 @@ fun MainScreen() {
 
     val showBottomBar = tabs.any { it.second == currentRoute }
 
+    LaunchedEffect(Unit) {
+        viewModel.errorFlow.collectLatest { error ->
+            snackbarHostState.showSnackbar(message = error, actionLabel = "Dismiss")
+        }
+    }
+
     ExchangeRateCheckerTheme {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             bottomBar = {
                 if (showBottomBar) {
                     NavigationBar {

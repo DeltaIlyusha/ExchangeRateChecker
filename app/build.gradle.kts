@@ -15,9 +15,7 @@ if (localPropertiesFile.exists()) {
 
 android {
     namespace = "com.iliaziuzin.exchangeratechecker"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.iliaziuzin.exchangeratechecker"
@@ -29,17 +27,24 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        getByName("debug") {
+
+        }
+    }
+
     buildTypes {
         debug {
-            buildConfigField("String", "API_KEY", localProperties.getProperty("API_KEY_DEBUG", "\"\""))
+            buildConfigField("String", "API_KEY", localProperties.getProperty("API_KEY", "\"\""))
         }
         release {
-            buildConfigField("String", "API_KEY", localProperties.getProperty("API_KEY_RELEASE", "\"\""))
+            buildConfigField("String", "API_KEY", localProperties.getProperty("API_KEY", "\"\""))
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
         create("mock") {
             initWith(getByName("debug"))

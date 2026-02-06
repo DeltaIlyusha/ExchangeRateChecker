@@ -101,8 +101,6 @@ fun CurrenciesScreen(
 
                     )
                 }
-            } else if (uiState.error != null) {
-                Text(text = "Error: ${uiState.error}")
             } else {
                 LazyColumn(
                     contentPadding = PaddingValues(16.dp),

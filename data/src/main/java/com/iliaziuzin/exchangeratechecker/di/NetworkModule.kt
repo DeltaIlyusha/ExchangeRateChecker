@@ -19,7 +19,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://api.apilayer.com"
+    private const val BASE_URL = "https://api.apilayer.com/exchangerates_data/"
 
     @Provides
     @Singleton
