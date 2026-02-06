@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -31,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,7 +66,7 @@ fun CurrenciesScreen(
     onSortClick: () -> Unit,
     onCurrencySelected: (String) -> Unit
 ) {
-    Scaffold(modifier = modifier) { paddingValues ->
+    Scaffold(modifier = modifier.background(MaterialTheme.colorScheme.BackgroundDefault)) { paddingValues ->
         Column(modifier = Modifier.fillMaxSize()) {
             CurrenciesHeader(
                 modifier = Modifier.padding(paddingValues),
@@ -89,7 +92,10 @@ fun CurrenciesScreen(
             } else if (uiState.error != null) {
                 Text(text = "Error: ${uiState.error}")
             } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                LazyColumn(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     val sortedSymbols = when (uiState.sortOption) {
                         SortOption.CODE_AZ -> uiState.currencyExchangePairs.sortedBy { it.to }
                         SortOption.CODE_ZA -> uiState.currencyExchangePairs.sortedByDescending { it.to }
@@ -122,16 +128,15 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
         Box(
             Modifier.background(MaterialTheme.colorScheme.BackgroundHeader)
         ) {
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Currencies",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 16.dp),
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -155,9 +160,19 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                             modifier = Modifier
                                 .menuAnchor()
                                 .fillMaxWidth()
+                                .height(48.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.Secondary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.Secondary,
+                            )
                         )
 
-                        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.Secondary),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
                             currencySymbols.forEach { symbol ->
                                 DropdownMenuItem(
                                     text = {
@@ -176,6 +191,7 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                         }
                     }
                     OutlinedIconButton(
+                        modifier = Modifier.size(48.dp),
                         onClick = onSortClick,
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.Secondary),
                         shape = RoundedCornerShape(8.dp)
