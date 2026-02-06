@@ -43,12 +43,18 @@ fun CurrencyComposable(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = code)
+            Text(
+                text = code,
+                style = MaterialTheme.typography.bodySmall,
+            )
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = rate)
+            Text(
+                text = rate,
+                style = MaterialTheme.typography.bodyMedium,
+            )
 
             Spacer(modifier = Modifier.size(16.dp))
             IconButton(

@@ -77,8 +77,16 @@ get() = MainTextDefault
 val ColorScheme.TextSecondary: Color@Composable
 get() = MainTextSecondary
 
-val ColorScheme.BorderStroke: Color@Composable
+val ColorScheme.Secondary: Color@Composable
 get() = MainSecondary
 
 val ColorScheme.BackgroundDefault: Color@Composable
 get() = BgDefault
+
+
+val ColorScheme.BackgroundHeader: Color@Composable
+get() = BgHeader
+
+val ColorScheme.OnPrimary: Color@Composable
+get() = MainOnPrimary
+

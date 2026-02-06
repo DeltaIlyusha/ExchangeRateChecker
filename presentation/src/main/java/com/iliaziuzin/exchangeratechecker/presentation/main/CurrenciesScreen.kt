@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -48,9 +50,9 @@ import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.presentation.R
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.CurrencyComposable
 import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundDefault
-import com.iliaziuzin.exchangeratechecker.ui.theme.BgDefault
-import com.iliaziuzin.exchangeratechecker.ui.theme.BorderStroke
+import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundHeader
 import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
+import com.iliaziuzin.exchangeratechecker.ui.theme.Secondary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,65 +64,14 @@ fun CurrenciesScreen(
     onCurrencySelected: (String) -> Unit
 ) {
     Scaffold(modifier = modifier) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).padding(16.dp)) {
-            Text(
-                text = "Currencies",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
+        Column(modifier = Modifier.fillMaxSize()) {
+            CurrenciesHeader(
+                modifier = Modifier.padding(paddingValues),
+                selectedCurrency = uiState.selectedCurrency,
+                currencySymbols = uiState.currencySymbols,
+                onSortClick = onSortClick,
+                onCurrencySelected = onCurrencySelected
             )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                var expanded by remember { mutableStateOf(false) }
-
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    OutlinedTextField(
-                        value = uiState.selectedCurrency,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(
-                                expanded = expanded
-                            )
-                        },
-                        modifier = Modifier.menuAnchor().fillMaxWidth()
-                    )
-
-                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        uiState.currencySymbols.forEach { symbol ->
-                            DropdownMenuItem(
-                                text = { Text(symbol) },
-                                onClick = {
-                                    onCurrencySelected(symbol)
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-                OutlinedIconButton(
-                    onClick = onSortClick,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.BorderStroke),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.icon_filters),
-                        contentDescription = "Sort currencies",
-                        tint = MaterialTheme.colorScheme.Primary
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.size(16.dp))
-
             if (uiState.isLoading) {
                 AnimatedVisibility(
                     modifier = Modifier
@@ -155,12 +106,92 @@ fun CurrenciesScreen(
                     }
                 }
             }
+         }
+        }
+    }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CurrenciesHeader(modifier: Modifier = Modifier,
+                     selectedCurrency:String,
+                     currencySymbols:List<String>,
+                     onSortClick: () -> Unit,
+                     onCurrencySelected: (String) -> Unit
+                     ) {
+        Box(
+            Modifier.background(MaterialTheme.colorScheme.BackgroundHeader)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                Text(
+                    text = "Currencies",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    var expanded by remember { mutableStateOf(false) }
+
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        OutlinedTextField(
+                            value = selectedCurrency,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                Icon(
+                                    tint = MaterialTheme.colorScheme.Primary,
+                                    painter = painterResource(if (!expanded) R.drawable.icon_arrow_down else R.drawable.icon_arrow_up),
+                                    contentDescription = "Currencies dropdown",
+                                )},
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
+                        )
+
+                        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                            currencySymbols.forEach { symbol ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            modifier = Modifier.padding(start = 16.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
+                                            text = symbol,
+                                            style = MaterialTheme.typography.bodySmall,
+                                        )
+                                    },
+                                    onClick = {
+                                        onCurrencySelected(symbol)
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    OutlinedIconButton(
+                        onClick = onSortClick,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.Secondary),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icon_filters),
+                            contentDescription = "Sort currencies",
+                            tint = MaterialTheme.colorScheme.Primary
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.fillMaxWidth().size(1.dp).background(color = MaterialTheme.colorScheme.Secondary))
+            }
 
         }
-
-
-
-    }
 }
 
 @Preview(showBackground = true)
@@ -168,6 +199,7 @@ fun CurrenciesScreen(
 fun CurrenciesScreenPreview() {
     CurrenciesScreen(
         uiState = MainUiState(
+            isLoading = true,
             currencySymbols = listOf("USD", "EUR", "RUB"),
             currencyExchangePairs = listOf(
                 UiCurrencyExchangePair("USD", "RUB", "1.0", true),
