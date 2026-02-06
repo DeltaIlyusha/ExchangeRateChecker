@@ -11,19 +11,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.iliaziuzin.exchangeratechecker.presentation.R
@@ -31,19 +27,17 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundDefault
 import com.iliaziuzin.exchangeratechecker.ui.theme.ExchangeRateCheckerTheme
 import com.iliaziuzin.exchangeratechecker.ui.theme.LightPrimary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
-import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
-import com.iliaziuzin.exchangeratechecker.ui.theme.Secondary
-import com.iliaziuzin.exchangeratechecker.ui.theme.TextDefault
-import com.iliaziuzin.exchangeratechecker.ui.theme.TextSecondary
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
-    val uiState by viewModel.uiState.collectAsState()
+fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val tabs = listOf("Currencies" to "currencies", "Favorites" to "favorites")
+    val tabs = listOf(
+        "Currencies" to AppDestinations.CURRENCIES_ROUTE,
+        "Favorites" to AppDestinations.FAVORITES_ROUTE
+    )
 
     val showBottomBar = tabs.any { it.second == currentRoute }
 
@@ -53,7 +47,10 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                 if (showBottomBar) {
                     NavigationBar {
                         Column(Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault)) {
-                            Spacer(modifier = Modifier.fillMaxWidth().size(1.dp).background(color = MaterialTheme.colorScheme.Outline))
+                            Spacer(modifier = Modifier
+                                .fillMaxWidth()
+                                .size(1.dp)
+                                .background(color = MaterialTheme.colorScheme.Outline))
                             Row() {
                                 tabs.forEachIndexed { index, (title, route) ->
                                     val selected = currentRoute == route
@@ -77,21 +74,17 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                                         icon = {
                                             val icon = when (index) {
                                                 0 -> if (selected) R.drawable.icon_currencies_on else R.drawable.icon_currencies_off
-                                                1 -> R.drawable.icon_favorites_on
+                                                1 -> if (selected) R.drawable.icon_favorites_on else R.drawable.icon_favorites_off
                                                 else -> R.drawable.icon_favorites_off
                                             }
                                             Icon(painterResource(id = icon), contentDescription = title)
                                         },
-                                        colors = NavigationBarItemColors(
-                                            selectedIndicatorColor = MaterialTheme.colorScheme.LightPrimary,
-                                            selectedIconColor = MaterialTheme.colorScheme.Primary,
-                                            selectedTextColor = MaterialTheme.colorScheme.TextDefault,
-                                            unselectedTextColor = MaterialTheme.colorScheme.Secondary,
-                                            unselectedIconColor = MaterialTheme.colorScheme.Secondary,
-                                            disabledIconColor = MaterialTheme.colorScheme.Secondary,
-                                            disabledTextColor = MaterialTheme.colorScheme.Secondary
+                                        colors = NavigationBarItemDefaults.colors(
+                                            indicatorColor = MaterialTheme.colorScheme.LightPrimary,
+                                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                                            unselectedIconColor = MaterialTheme.colorScheme.secondary,
+                                            unselectedTextColor = MaterialTheme.colorScheme.secondary
                                         )
-
                                     )
                                 }
                             }
@@ -101,31 +94,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                 }
             }
         ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "currencies",
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                composable("currencies") {
-                    CurrenciesScreen(
-                        uiState = uiState,
-                        onFavoriteClick = viewModel::addFavorite,
-                        onCurrencySelected = viewModel::onCurrencySelected,
-                        onSortClick = { navController.navigate("filters") }
-                    )
-                }
-                composable("filters") {
-                    FiltersScreen(
-                        currentSortOption = uiState.sortOption,
-                        onSortOptionChange = viewModel::onSortOptionChange,
-                        onApplyClick = { navController.popBackStack() },
-                        onBackClick = { navController.popBackStack() }
-                    )
-                }
-                composable("favorites") {
-                    FavoritesScreen(uiState = uiState, onRemoveFavorite = viewModel::removeFavorite)
-                }
-            }
+           AppNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
         }
     }
 }

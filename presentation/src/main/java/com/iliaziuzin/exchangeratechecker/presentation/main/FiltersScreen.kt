@@ -44,7 +44,7 @@ fun FiltersScreen(
     onBackClick: () -> Unit
 ) {
     Scaffold(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 modifier = Modifier.fillMaxWidth().background(color = MaterialTheme.colorScheme.BackgroundHeader),

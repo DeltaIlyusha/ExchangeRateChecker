@@ -77,14 +77,19 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun toggleFavorite(pair: UiCurrencyExchangePair) {
+        if (pair.isFavorite) removeFavorite(pair)
+        else addFavorite(pair)
+    }
 
-    fun addFavorite(pair: UiCurrencyExchangePair) {
+    private fun addFavorite(pair: UiCurrencyExchangePair) {
         viewModelScope.launch {
             addFavoriteUseCase(pair.toFavoriteCurrenciesPair())
         }
     }
 
     fun removeFavorite(pair: UiCurrencyExchangePair) {
+        _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             removeFavoriteUseCase(pair.toFavoriteCurrenciesPair())
         }

@@ -1,5 +1,6 @@
 package com.iliaziuzin.exchangeratechecker.repository
 
+import android.util.Log
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyCode
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyExchangePairWithFavorite
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
@@ -20,17 +21,30 @@ class ExchangeRateRepositoryImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository,
 ) : ExchangeRateRepository {
     override fun getRatesForFavorites(): Flow<List<CurrencyExchangePairWithFavorite>> {
-        val latestRatesFlow = currencyRepository.getLatestRates()
-        val favoritesFlow = favoriteRepository.getFavorites()
+        return favoriteRepository.getFavorites().flatMapLatest { favorites ->
+            if (favorites.isEmpty()) {
+                return@flatMapLatest flowOf(emptyList<CurrencyExchangePairWithFavorite>())
+            }
 
-        return combine(latestRatesFlow, favoritesFlow) { rates, favorites ->
-            favorites.map {
-                CurrencyExchangePairWithFavorite(
-                    from = it.from,
-                    to = it.to,
-                    rate = 0.0,
-                    isFavorite = true
-                )
+            val favoritesByFrom = favorites.groupBy { it.from }
+
+            val favoriteRateFlows = favoritesByFrom.map { (from, favoriteList) ->
+                val toSymbols = favoriteList.map { it.to }.joinToString(",")
+                Log.d(ExchangeRateRepository::class.simpleName, "Requesting rates for $from with symbols $toSymbols")
+                currencyRepository.getLatestRates(base = from, symbols = toSymbols)
+            }
+
+            combine(favoriteRateFlows) { rateMapsArray ->
+                rateMapsArray.flatMap { ratesMap ->
+                    ratesMap.values.map { currencyExchangePair ->
+                        CurrencyExchangePairWithFavorite(
+                            from = currencyExchangePair.from,
+                            to = currencyExchangePair.to,
+                            rate = currencyExchangePair.rate,
+                            isFavorite = true
+                        )
+                    }
+                }
             }
         }.catch {
             emit(emptyList())
