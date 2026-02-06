@@ -21,11 +21,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class SortOption {
-    NAME_ASC,
-    NAME_DESC,
-    RATE_ASC,
-    RATE_DESC
+enum class SortOption(val displayName: String) {
+    CODE_AZ("Code A-Z"),
+    CODE_ZA("Code Z-A"),
+    QUOTE_ASC("Quote Asc."),
+    QUOTE_DESC("Quote Desc.")
 }
 
 @HiltViewModel
@@ -38,13 +38,6 @@ class MainViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState = _uiState.asStateFlow()
-
-    /*val uiCurrencies: StateFlow<CurrenciesUiState> = getLatestRatesForCurrency("USD")
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000), // Keep the flow active for 5s after the UI is gone
-            initialValue = CurrenciesUiState(isLoading = true, currencyExchangePairs = emptyList())
-        )*/
 
 
     init {
@@ -87,11 +80,11 @@ data class MainUiState(
     val currencyExchangePairs: List<UiCurrencyExchangePair> = emptyList(),
     val favorites: List<UiCurrencyExchangePair> = emptyList(),
     val error: String? = null,
-    val sortOption: SortOption = SortOption.NAME_ASC
+    val sortOption: SortOption = SortOption.CODE_AZ
 )
 
 data class CurrenciesUiState(
     val isLoading: Boolean = false,
     val currencyExchangePairs: List<UiCurrencyExchangePair> = emptyList(),
-    val sortOption: SortOption = SortOption.NAME_ASC
+    val sortOption: SortOption = SortOption.CODE_AZ
 )

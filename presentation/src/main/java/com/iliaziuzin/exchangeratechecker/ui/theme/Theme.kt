@@ -67,3 +67,15 @@ get() = MainYellow
 
 val ColorScheme.FavDisabled: Color@Composable
 get() = MainSecondary
+
+val ColorScheme.Primary: Color@Composable
+get() = MainPrimary
+
+val ColorScheme.TextDefault: Color@Composable
+get() = MainTextDefault
+
+val ColorScheme.TextSecondary: Color@Composable
+get() = MainTextSecondary
+
+val ColorScheme.BorderStroke: Color@Composable
+get() = MainSecondary
