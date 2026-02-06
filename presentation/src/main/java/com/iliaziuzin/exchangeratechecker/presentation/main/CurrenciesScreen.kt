@@ -77,7 +77,7 @@ fun CurrenciesScreen(
     onCurrencySelected: (String) -> Unit
 ) {
     Scaffold(modifier = modifier.background(MaterialTheme.colorScheme.BackgroundDefault)) { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = modifier.fillMaxSize()) {
             CurrenciesHeader(
                 modifier = Modifier.padding(paddingValues),
                 selectedCurrency = uiState.selectedCurrency,
@@ -88,7 +88,7 @@ fun CurrenciesScreen(
             if (uiState.isLoading) {
                 AnimatedVisibility(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize().background(MaterialTheme.colorScheme.BackgroundDefault),
                     visible = true,
                     enter = EnterTransition.None,
                     exit = fadeOut(),
@@ -103,6 +103,7 @@ fun CurrenciesScreen(
                 }
             } else {
                 LazyColumn(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundDefault).weight(1f),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -172,6 +173,7 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                     ) {
                         OutlinedTextField(
                             value = selectedCurrency,
+                            textStyle = MaterialTheme.typography.bodySmall,
                             onValueChange = {},
                             readOnly = true,
                             enabled = false,
@@ -192,6 +194,7 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                         )
 
                         TopAlignedDropdownMenu(
+                            modifier = Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault),
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
                             anchorSize = textFieldSize,

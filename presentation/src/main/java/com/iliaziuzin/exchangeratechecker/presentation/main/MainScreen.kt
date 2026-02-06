@@ -32,6 +32,8 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundDefault
 import com.iliaziuzin.exchangeratechecker.ui.theme.ExchangeRateCheckerTheme
 import com.iliaziuzin.exchangeratechecker.ui.theme.LightPrimary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
+import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
+import com.iliaziuzin.exchangeratechecker.ui.theme.TextDefault
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -95,9 +97,10 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                                         },
                                         colors = NavigationBarItemDefaults.colors(
                                             indicatorColor = MaterialTheme.colorScheme.LightPrimary,
-                                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                                            unselectedIconColor = MaterialTheme.colorScheme.secondary,
-                                            unselectedTextColor = MaterialTheme.colorScheme.secondary
+                                            selectedIconColor = MaterialTheme.colorScheme.Primary,
+                                            selectedTextColor = MaterialTheme.colorScheme.TextDefault,
+                                            unselectedIconColor = MaterialTheme.colorScheme.LightPrimary,
+                                            unselectedTextColor = MaterialTheme.colorScheme.LightPrimary
                                         )
                                     )
                                 }

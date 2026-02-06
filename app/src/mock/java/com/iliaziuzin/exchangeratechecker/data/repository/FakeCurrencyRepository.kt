@@ -25,7 +25,7 @@ class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
 
     override fun getLatestRates(base: CurrencyCode?, symbols: String?): Flow<Map<CurrencyCode, CurrencyExchangePair>> = flow {
         delay(1000)
-        val baseCurrency = base ?: "USD"
+        val baseCurrency = base ?: "EUR"
         val targetSymbols = symbols?.split(',') ?: listOf("EUR", "RUB", "GBP")
 
         val rates = targetSymbols.associateWith {

@@ -4,10 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 
 object AppDestinations {
     const val CURRENCIES_ROUTE = "currencies"
@@ -36,7 +38,13 @@ fun AppNavHost(
                 onSortClick = { navController.navigate(AppDestinations.FILTERS_ROUTE) }
             )
         }
-        composable(AppDestinations.FILTERS_ROUTE) {
+        dialog(
+            route = AppDestinations.FILTERS_ROUTE,
+            dialogProperties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
+            )
+        ) {
             FiltersScreen(
                 currentSortOption = uiState.sortOption,
                 onSortOptionChange = viewModel::onSortOptionChange,

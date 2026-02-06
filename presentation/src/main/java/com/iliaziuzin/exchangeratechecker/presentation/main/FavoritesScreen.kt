@@ -49,6 +49,7 @@ fun FavoritesScreen(modifier:Modifier = Modifier, uiState: MainUiState, onRemove
             Text("No favorites yet.")
         } else {
             LazyColumn(
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault).weight(1f),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(uiState.favorites, key = { it.from + it.to }) {

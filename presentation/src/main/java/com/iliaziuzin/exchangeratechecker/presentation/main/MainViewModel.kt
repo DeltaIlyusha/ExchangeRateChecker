@@ -65,7 +65,6 @@ class MainViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     currencySymbols = currencies.keys.toList(),
-                    isLoading = false
                 )
             }
         }.catch { e ->
@@ -116,11 +115,5 @@ data class MainUiState(
     val selectedCurrency:String = "EUR",
     val currencyExchangePairs: List<UiCurrencyExchangePair> = emptyList(),
     val favorites: List<UiCurrencyExchangePair> = emptyList(),
-    val sortOption: SortOption = SortOption.CODE_AZ
-)
-
-data class CurrenciesUiState(
-    val isLoading: Boolean = false,
-    val currencyExchangePairs: List<UiCurrencyExchangePair> = emptyList(),
     val sortOption: SortOption = SortOption.CODE_AZ
 )
