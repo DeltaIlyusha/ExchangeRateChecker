@@ -11,10 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.iliaziuzin.exchangeratechecker.models.CurrencyExchangePairItem
+import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
 
 @Composable
-fun FavoritesScreen(uiState: MainUiState, onRemoveFavorite: (CurrencyExchangePairItem) -> Unit) {
+fun FavoritesScreen(uiState: MainUiState, onRemoveFavorite: (UiCurrencyExchangePair) -> Unit) {
     if (uiState.favorites.isEmpty()) {
         Text("No favorites yet.")
     } else {
@@ -37,8 +37,8 @@ fun FavoritesScreenPreview() {
     FavoritesScreen(
         uiState = MainUiState(
             favorites = listOf(
-                CurrencyExchangePairItem("USD", "RUB", 1.0),
-                CurrencyExchangePairItem("USD","USD", 1.0)
+                UiCurrencyExchangePair("USD", "RUB", 1.0, false),
+                UiCurrencyExchangePair("USD","USD", 1.0, false)
             )
         ),
         onRemoveFavorite = {}

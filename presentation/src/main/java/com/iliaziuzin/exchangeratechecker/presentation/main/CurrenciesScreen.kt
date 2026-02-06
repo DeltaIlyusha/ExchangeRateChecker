@@ -11,14 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.iliaziuzin.exchangeratechecker.models.CurrencyExchangePairItem
+import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.CurrencyComposable
 
 @Composable
 fun CurrenciesScreen(
     modifier: Modifier = Modifier,
     uiState: MainUiState,
-    onFavoriteClick: (CurrencyExchangePairItem) -> Unit,
+    onFavoriteClick: (UiCurrencyExchangePair) -> Unit,
     onSortClick: () -> Unit,
 ) {
     Scaffold(modifier = modifier) { paddingValues ->
@@ -57,9 +57,9 @@ fun CurrenciesScreenPreview() {
     CurrenciesScreen(
         uiState = MainUiState(
             currencyExchangePairs = listOf(
-                CurrencyExchangePairItem("USD", "RUB", 1.0),
-                CurrencyExchangePairItem("EUR", "RUB", 1.0),
-                CurrencyExchangePairItem("RUB", "USD", 1.0),
+                UiCurrencyExchangePair("USD", "RUB", 1.0, true),
+                UiCurrencyExchangePair("EUR", "RUB", 1.0, false),
+                UiCurrencyExchangePair("RUB", "USD", 1.0, false),
             ),
         ),
         onFavoriteClick = {},

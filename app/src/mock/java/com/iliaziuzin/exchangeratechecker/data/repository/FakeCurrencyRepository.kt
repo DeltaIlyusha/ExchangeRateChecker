@@ -1,12 +1,13 @@
 package com.iliaziuzin.exchangeratechecker.data.repository
 
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyCode
-import com.iliaziuzin.exchangeratechecker.domain.models.ExchangeRate
+import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.domain.repository.CurrencyRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlin.random.Random
 
 class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
 
@@ -185,21 +186,23 @@ class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
         "ZWL" to "Zimbabwean Dollar"
     )
 
-    private val rates = mapOf<CurrencyCode, Map<CurrencyCode, Double>>(
-        "USD" to mapOf("EUR" to 0.847665, "RUB" to 76.124707, "GBP" to 0.79),
-        "EUR" to mapOf("USD" to 0.847665, "RUB" to 76.124707, "GBP" to 0.79),
-        "RUB" to mapOf("USD" to 0.847665, "EUR" to 76.124707, "GBP" to 0.79),
-
-    )
-
     override suspend fun getSymbols(): Flow<Map<CurrencyCode, String>> = flow {
         delay(1000)
         emit(symbols)
     }
 
-    override suspend fun getLatestRates(base: CurrencyCode?, symbols: String?): Flow<Map<CurrencyCode, ExchangeRate>> = flow {
+    override suspend fun getLatestRates(base: CurrencyCode?, symbols: String?): Flow<Map<CurrencyCode, CurrencyExchangePair>> = flow {
         delay(1000)
-        val ratesToReturn = rates[base] ?: emptyMap()
-        emit(ratesToReturn)
+        val baseCurrency = base ?: "USD"
+        val targetSymbols = symbols?.split(',') ?: listOf("EUR", "RUB", "GBP")
+
+        val rates = targetSymbols.associateWith {
+            CurrencyExchangePair(
+                from = baseCurrency,
+                to = it,
+                rate = Random.nextDouble(0.5, 1.5)
+            )
+        }
+        emit(rates)
     }
 }

@@ -1,10 +1,11 @@
 package com.iliaziuzin.exchangeratechecker.domain.usecase
 
-import com.iliaziuzin.exchangeratechecker.domain.repository.CurrencyRepository
+import com.iliaziuzin.exchangeratechecker.domain.repository.ExchangeRateRepository
 import javax.inject.Inject
 
+
 class GetLatestRatesForCurrency @Inject constructor(
-    private val repository: CurrencyRepository
+    private val repository: ExchangeRateRepository
 ) {
-    suspend operator fun invoke() = repository.getSymbols()
+    operator fun invoke(base: String) = repository.getLatestRatesForCurrency(base)
 }
