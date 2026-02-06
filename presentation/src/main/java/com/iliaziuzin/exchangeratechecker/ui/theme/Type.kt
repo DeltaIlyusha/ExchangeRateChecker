@@ -51,7 +51,6 @@ val Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 12.sp,
         letterSpacing = 0.sp,
-        color = MainTextDefault
     ),
 
     //Filters subtitle
