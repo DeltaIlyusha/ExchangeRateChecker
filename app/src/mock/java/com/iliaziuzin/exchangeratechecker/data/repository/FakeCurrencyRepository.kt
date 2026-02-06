@@ -186,12 +186,12 @@ class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
         "ZWL" to "Zimbabwean Dollar"
     )
 
-    override suspend fun getSymbols(): Flow<Map<CurrencyCode, String>> = flow {
+    override fun getSymbols(): Flow<Map<CurrencyCode, String>> = flow {
         delay(1000)
         emit(symbols)
     }
 
-    override suspend fun getLatestRates(base: CurrencyCode?, symbols: String?): Flow<Map<CurrencyCode, CurrencyExchangePair>> = flow {
+    override fun getLatestRates(base: CurrencyCode?, symbols: String?): Flow<Map<CurrencyCode, CurrencyExchangePair>> = flow {
         delay(1000)
         val baseCurrency = base ?: "USD"
         val targetSymbols = symbols?.split(',') ?: listOf("EUR", "RUB", "GBP")

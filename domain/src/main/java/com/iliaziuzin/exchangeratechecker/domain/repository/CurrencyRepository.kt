@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface CurrencyRepository {
 
-    suspend fun getSymbols(): Flow<Map<CurrencyCode, String>>
+    fun getSymbols(): Flow<Map<CurrencyCode, String>>
 
-    suspend fun getLatestRates(
+    fun getLatestRates(
         base: String? = null,
         symbols: String? = null
     ): Flow<Map<CurrencyCode, CurrencyExchangePair>>

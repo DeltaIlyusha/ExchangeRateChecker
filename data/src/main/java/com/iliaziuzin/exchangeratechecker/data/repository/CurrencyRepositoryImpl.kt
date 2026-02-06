@@ -12,7 +12,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : CurrencyRepository {
 
-    override suspend fun getSymbols(): Flow<Map<CurrencyCode, String>> = flow {
+    override fun getSymbols(): Flow<Map<CurrencyCode, String>> = flow {
         val response = apiService.getSymbols()
         if (response.success) {
             emit(response.symbols)
@@ -21,7 +21,7 @@ class CurrencyRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getLatestRates(base: CurrencyCode?, symbols: String?): Flow<Map<CurrencyCode, CurrencyExchangePair>> = flow {
+    override fun getLatestRates(base: CurrencyCode?, symbols: String?): Flow<Map<CurrencyCode, CurrencyExchangePair>> = flow {
         val response = apiService.getLatestRates(base, symbols)
         if (response.success) {
             val map = response.rates.mapValues {

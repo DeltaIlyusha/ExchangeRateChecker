@@ -1,6 +1,5 @@
 package com.iliaziuzin.exchangeratechecker.domain.repository
 
-import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyExchangePairWithFavorite
 import kotlinx.coroutines.flow.Flow
 

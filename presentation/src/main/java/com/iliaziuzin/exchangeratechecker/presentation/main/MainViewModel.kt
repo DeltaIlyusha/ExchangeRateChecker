@@ -63,21 +63,10 @@ class MainViewModel @Inject constructor(
     }
 
     private fun loadRatesForCurrencies() {
-
+        getLatestRatesForCurrency().onEach { currencies ->
+            _uiState.update { it.copy(currencyExchangePairs = currencies.map { currency -> currency.toCurrencyExchangePairItem() }) }
+        }.launchIn(viewModelScope)
     }
-
-
-    /*private fun loadSymbols() {
-        *//*viewModelScope.launch {
-            _uiState.update { it.copy(isLoadingSymbols = true) }
-            try {
-                val symbols = getSymbolsUseCase()
-                _uiState.update { it.copy(symbols = symbols, isLoadingSymbols = false) }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message, isLoadingSymbols = false) }
-            }
-        }*//*
-    }*/
 
 
     fun addFavorite(pair: UiCurrencyExchangePair) {

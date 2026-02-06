@@ -7,5 +7,5 @@ import javax.inject.Inject
 class GetLatestRatesForCurrency @Inject constructor(
     private val repository: ExchangeRateRepository
 ) {
-    operator fun invoke(base: String) = repository.getLatestRatesForCurrency(base)
+    operator fun invoke(base: String = "USD") = repository.getLatestRatesForCurrency(base)
 }
