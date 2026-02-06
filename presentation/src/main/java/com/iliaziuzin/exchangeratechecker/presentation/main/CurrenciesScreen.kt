@@ -5,6 +5,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,27 +16,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,13 +42,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
 import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.presentation.R
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.CurrencyComposable
@@ -58,6 +65,7 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundHeader
 import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
 import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Secondary
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,57 +148,73 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                 )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(18.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(18.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     var expanded by remember { mutableStateOf(false) }
+                    var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
+                    var textFieldPosition by remember { mutableStateOf(IntOffset.Zero) }
 
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
-                        modifier = Modifier.weight(1f)
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .onSizeChanged { textFieldSize = it }
+                            .onGloballyPositioned { 
+                                val positionInWindow = it.positionInWindow()
+                                textFieldPosition = IntOffset(positionInWindow.x.roundToInt(), positionInWindow.y.roundToInt()) 
+                            }
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = { expanded = !expanded }
+                            )
                     ) {
                         OutlinedTextField(
                             value = selectedCurrency,
                             onValueChange = {},
                             readOnly = true,
+                            enabled = false,
                             trailingIcon = {
                                 Icon(
-                                    tint = MaterialTheme.colorScheme.Primary,
                                     painter = painterResource(if (!expanded) R.drawable.icon_arrow_down else R.drawable.icon_arrow_up),
                                     contentDescription = "Currencies dropdown",
                                 )},
                             modifier = Modifier
-                                .menuAnchor()
                                 .fillMaxWidth()
                                 .height(48.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.Secondary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.Secondary,
+                                disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                disabledContainerColor = Color.Transparent,
+                                disabledBorderColor = MaterialTheme.colorScheme.Secondary,
+                                disabledTrailingIconColor = MaterialTheme.colorScheme.Primary
                             )
                         )
 
-                        ExposedDropdownMenu(
+                        TopAlignedDropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.Secondary),
-                            shape = RoundedCornerShape(8.dp)
+                            anchorSize = textFieldSize,
+                            anchorPosition = textFieldPosition
                         ) {
-                            currencySymbols.forEach { symbol ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            modifier = Modifier.padding(start = 16.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
-                                            text = symbol,
-                                            style = MaterialTheme.typography.bodySmall,
-                                        )
-                                    },
-                                    onClick = {
-                                        onCurrencySelected(symbol)
-                                        expanded = false
-                                    }
-                                )
+                            LazyColumn {
+                                items(items = currencySymbols, key = {it}) { symbol ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                modifier = Modifier.padding(start = 16.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
+                                                text = symbol,
+                                                style = MaterialTheme.typography.bodySmall,
+                                            )
+                                        },
+                                        onClick = {
+                                            onCurrencySelected(symbol)
+                                            expanded = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -208,10 +232,55 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                     }
                 }
                 Spacer(modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.fillMaxWidth().size(1.dp).background(color = MaterialTheme.colorScheme.Outline))
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .size(1.dp)
+                    .background(color = MaterialTheme.colorScheme.Outline))
             }
 
         }
+}
+
+@Composable
+private fun TopAlignedDropdownMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    anchorSize: IntSize,
+    anchorPosition: IntOffset,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val popupPositionProvider = object : PopupPositionProvider {
+        override fun calculatePosition(
+            anchorBounds: IntRect,
+            windowSize: IntSize,
+            layoutDirection: LayoutDirection,
+            popupContentSize: IntSize
+        ): IntOffset {
+            return IntOffset(
+                x = anchorPosition.x,
+                y = anchorPosition.y - popupContentSize.height
+            )
+        }
+    }
+
+    if (expanded) {
+        Popup(
+            popupPositionProvider = popupPositionProvider,
+            onDismissRequest = onDismissRequest
+        ) {
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.Secondary),
+                modifier = modifier
+                    .width(with(LocalDensity.current) { anchorSize.width.toDp() })
+                    .heightIn(max = 216.dp)
+                    .background(MaterialTheme.colorScheme.BackgroundHeader)
+            ) {
+                content()
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
