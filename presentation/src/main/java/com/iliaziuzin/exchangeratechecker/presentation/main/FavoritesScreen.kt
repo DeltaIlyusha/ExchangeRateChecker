@@ -23,6 +23,7 @@ import com.iliaziuzin.exchangeratechecker.presentation.main.composable.CurrencyC
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.SimpleScreenHeader
 import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundDefault
 import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
+import java.text.DecimalFormat
 
 @Composable
 fun FavoritesScreen(modifier:Modifier = Modifier, uiState: MainUiState, onRemoveFavorite: (UiCurrencyExchangePair) -> Unit) {
@@ -52,11 +53,12 @@ fun FavoritesScreen(modifier:Modifier = Modifier, uiState: MainUiState, onRemove
                 modifier = Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault).weight(1f),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(uiState.favorites, key = { it.from + it.to }) {
+                items(uiState.favorites, key = { it.key }) {
                     item ->
+                    val decimalFormat = DecimalFormat("#.######")
                     CurrencyComposable(
                         code = "${item.from}/${item.to}",
-                        rate = item.rate,
+                        rate = decimalFormat.format(item.rate),
                         isFavorite = item.isFavorite,
                         onFavoriteClick = { onRemoveFavorite(item) }
                     )
@@ -72,8 +74,8 @@ fun FavoritesScreenPreview() {
     FavoritesScreen(
         uiState = MainUiState(
             favorites = listOf(
-                UiCurrencyExchangePair("USD", "RUB", "1.0", true),
-                UiCurrencyExchangePair("EUR", "USD", "1.0", true)
+                UiCurrencyExchangePair("USD", "RUB", 1.0, true, "USDRUB"),
+                UiCurrencyExchangePair("EUR", "USD", 1.0, true, "EURUSD")
             )
         ),
         onRemoveFavorite = {}

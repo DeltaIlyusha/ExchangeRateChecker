@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -26,7 +27,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
@@ -65,9 +65,10 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundHeader
 import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
 import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Secondary
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun CurrenciesScreen(
     modifier: Modifier = Modifier,
@@ -77,7 +78,7 @@ fun CurrenciesScreen(
     onCurrencySelected: (String) -> Unit
 ) {
     Scaffold(modifier = modifier.background(MaterialTheme.colorScheme.BackgroundDefault)) { paddingValues ->
-        Column(modifier = modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
             CurrenciesHeader(
                 modifier = Modifier.padding(paddingValues),
                 selectedCurrency = uiState.selectedCurrency,
@@ -114,10 +115,11 @@ fun CurrenciesScreen(
                         SortOption.QUOTE_DESC -> uiState.currencyExchangePairs.sortedByDescending { it.rate }
                     }
 
-                    items(items = sortedSymbols, key = { it.to }) { it ->
+                    items(items = sortedSymbols, key = { it.key }) { it ->
+                        val decimalFormat = DecimalFormat("#.######")
                         CurrencyComposable(
                             code = it.to,
-                            rate = it.rate,
+                            rate = decimalFormat.format(it.rate),
                             isFavorite = it.isFavorite,
                             onFavoriteClick = { onFavoriteClick(it) })
                     }
@@ -128,7 +130,6 @@ fun CurrenciesScreen(
     }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrenciesHeader(modifier: Modifier = Modifier,
                      selectedCurrency:String,
@@ -292,9 +293,9 @@ fun CurrenciesScreenPreview() {
             isLoading = true,
             currencySymbols = listOf("USD", "EUR", "RUB"),
             currencyExchangePairs = listOf(
-                UiCurrencyExchangePair("USD", "RUB", "1.0", true),
-                UiCurrencyExchangePair("EUR", "RUB", "1.0", false),
-                UiCurrencyExchangePair("RUB", "USD", "1.0", false),
+                UiCurrencyExchangePair("USD", "RUB", 1.0, true, "USDRUB"),
+                UiCurrencyExchangePair("EUR", "RUB", 1.0, false, "EURRUB"),
+                UiCurrencyExchangePair("RUB", "USD", 1.0, false, "RUBUSD"),
             ),
         ),
         onFavoriteClick = {},

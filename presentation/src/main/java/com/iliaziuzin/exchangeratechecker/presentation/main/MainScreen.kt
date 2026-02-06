@@ -33,6 +33,7 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.ExchangeRateCheckerTheme
 import com.iliaziuzin.exchangeratechecker.ui.theme.LightPrimary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
 import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
+import com.iliaziuzin.exchangeratechecker.ui.theme.Secondary
 import com.iliaziuzin.exchangeratechecker.ui.theme.TextDefault
 import kotlinx.coroutines.flow.collectLatest
 
@@ -99,8 +100,8 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                                             indicatorColor = MaterialTheme.colorScheme.LightPrimary,
                                             selectedIconColor = MaterialTheme.colorScheme.Primary,
                                             selectedTextColor = MaterialTheme.colorScheme.TextDefault,
-                                            unselectedIconColor = MaterialTheme.colorScheme.LightPrimary,
-                                            unselectedTextColor = MaterialTheme.colorScheme.LightPrimary
+                                            unselectedIconColor = MaterialTheme.colorScheme.Secondary,
+                                            unselectedTextColor = MaterialTheme.colorScheme.Secondary
                                         )
                                     )
                                 }
