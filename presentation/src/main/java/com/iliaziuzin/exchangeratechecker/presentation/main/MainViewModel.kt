@@ -52,7 +52,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun onSortOptionChange(sortOption: SortOption) {
-        _uiState.update { it.copy(sortOption = sortOption) }
+        _uiState.update {
+            val sortedPairs = sortList(it.currencyExchangePairs, sortOption)
+            it.copy(sortOption = sortOption, currencyExchangePairs = sortedPairs)
+        }
     }
 
     fun onCurrencySelected(currency: String) {
@@ -82,13 +85,26 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun loadRatesForCurrencies(baseCurrency:String) {
+    private fun loadRatesForCurrencies(baseCurrency: String) {
         getLatestRatesForCurrency(baseCurrency).onEach { currencies ->
-            _uiState.update { it.copy(isLoading = false, currencyExchangePairs = currencies.map { currency -> currency.toCurrencyExchangePairItem() }) }
+            _uiState.update { currentState ->
+                val unsortedList = currencies.map { currency -> currency.toCurrencyExchangePairItem() }
+                val sortedList = sortList(unsortedList, currentState.sortOption)
+                currentState.copy(isLoading = false, currencyExchangePairs = sortedList)
+            }
         }.catch { e ->
             _uiState.update { it.copy(isLoading = false) }
             e.message?.let { _errorFlow.emit(it) }
         }.launchIn(viewModelScope)
+    }
+
+    private fun sortList(list: List<UiCurrencyExchangePair>, option: SortOption): List<UiCurrencyExchangePair> {
+        return when (option) {
+            SortOption.CODE_AZ -> list.sortedBy { it.to }
+            SortOption.CODE_ZA -> list.sortedByDescending { it.to }
+            SortOption.QUOTE_ASC -> list.sortedBy { it.rate }
+            SortOption.QUOTE_DESC -> list.sortedByDescending { it.rate }
+        }
     }
 
     fun toggleFavorite(pair: UiCurrencyExchangePair) {

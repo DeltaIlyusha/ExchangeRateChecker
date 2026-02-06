@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +43,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInWindow
@@ -55,6 +58,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
@@ -108,14 +112,7 @@ fun CurrenciesScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val sortedSymbols = when (uiState.sortOption) {
-                        SortOption.CODE_AZ -> uiState.currencyExchangePairs.sortedBy { it.to }
-                        SortOption.CODE_ZA -> uiState.currencyExchangePairs.sortedByDescending { it.to }
-                        SortOption.QUOTE_ASC -> uiState.currencyExchangePairs.sortedBy { it.rate }
-                        SortOption.QUOTE_DESC -> uiState.currencyExchangePairs.sortedByDescending { it.rate }
-                    }
-
-                    items(items = sortedSymbols, key = { it.key }) { it ->
+                    items(items = uiState.currencyExchangePairs, key = { it.key }) { it ->
                         val decimalFormat = DecimalFormat("#.######")
                         CurrencyComposable(
                             code = it.to,
@@ -157,20 +154,23 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                     var expanded by remember { mutableStateOf(false) }
                     var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
                     var textFieldPosition by remember { mutableStateOf(IntOffset.Zero) }
-
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .onSizeChanged { textFieldSize = it }
-                            .onGloballyPositioned { 
+                            .onSizeChanged {
+                                textFieldSize = it
+                            }
+                            .onGloballyPositioned {
                                 val positionInWindow = it.positionInWindow()
-                                textFieldPosition = IntOffset(positionInWindow.x.roundToInt(), positionInWindow.y.roundToInt()) 
+                                textFieldPosition = IntOffset(positionInWindow.x.roundToInt(), positionInWindow.y.roundToInt())
                             }
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                                 onClick = { expanded = !expanded }
-                            )
+                            ),
+                        contentAlignment = Alignment.TopStart
+
                     ) {
                         OutlinedTextField(
                             value = selectedCurrency,
@@ -179,10 +179,13 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                             readOnly = true,
                             enabled = false,
                             trailingIcon = {
-                                Icon(
-                                    painter = painterResource(if (!expanded) R.drawable.icon_arrow_down else R.drawable.icon_arrow_up),
-                                    contentDescription = "Currencies dropdown",
-                                )},
+                                if (!expanded) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.icon_arrow_down),
+                                        contentDescription = "Currencies dropdown",
+                                    )
+                                }
+                                },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
@@ -191,22 +194,32 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                                 disabledContainerColor = Color.Transparent,
                                 disabledBorderColor = MaterialTheme.colorScheme.Secondary,
                                 disabledTrailingIconColor = MaterialTheme.colorScheme.Primary
-                            )
+                            ),
+                            shape = RoundedCornerShape(8.dp)
                         )
 
-                        TopAlignedDropdownMenu(
-                            modifier = Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault),
+                        PositionedDropdownMenu(
+                            modifier = Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault).heightIn(max = 216.dp),
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
                             anchorSize = textFieldSize,
                             anchorPosition = textFieldPosition
                         ) {
-                            LazyColumn {
-                                items(items = currencySymbols, key = {it}) { symbol ->
+                            Column {
+                                currencySymbols.fastForEachIndexed { index, symbol ->
                                     DropdownMenuItem(
+                                        modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundDefault),
+                                        trailingIcon = {
+                                            if (index == 0) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.icon_arrow_up),
+                                                    tint = MaterialTheme.colorScheme.Primary,
+                                                    contentDescription = "Dropdown icon",
+                                                ) }
+                                            },
                                         text = {
                                             Text(
-                                                modifier = Modifier.padding(start = 16.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
+                                                modifier = Modifier.padding(start = 4.dp, end = 24.dp, top = 18.dp, bottom = 18.dp),
                                                 text = symbol,
                                                 style = MaterialTheme.typography.bodySmall,
                                             )
@@ -244,7 +257,7 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
 }
 
 @Composable
-private fun TopAlignedDropdownMenu(
+private fun PositionedDropdownMenu(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     anchorSize: IntSize,
@@ -261,7 +274,7 @@ private fun TopAlignedDropdownMenu(
         ): IntOffset {
             return IntOffset(
                 x = anchorPosition.x,
-                y = anchorPosition.y - popupContentSize.height
+                y = anchorPosition.y
             )
         }
     }
