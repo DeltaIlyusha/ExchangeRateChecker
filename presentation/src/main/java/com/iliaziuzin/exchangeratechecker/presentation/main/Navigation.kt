@@ -53,7 +53,7 @@ fun AppNavHost(
             )
         }
         composable(AppDestinations.FAVORITES_ROUTE) {
-            FavoritesScreen(uiState = uiState, onRemoveFavorite = viewModel::removeFavorite)
+            FavoritesScreen(uiState = uiState, onRemoveFavorite = viewModel::toggleFavorite)
         }
     }
 }

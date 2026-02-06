@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ExchangeRateRepositoryImpl @Inject constructor(
     private val favoriteRepository: FavoriteRepository,
     private val currencyRepository: CurrencyRepository,
@@ -56,21 +58,21 @@ class ExchangeRateRepositoryImpl @Inject constructor(
         val symbolsFlow = currencyRepository.getSymbols()
         val favoritesFlow = favoriteRepository.getFavorites()
 
-        return symbolsFlow.flatMapLatest { symbolsMap ->
+        val ratesFlow: Flow<Map<CurrencyCode, CurrencyExchangePair>> = symbolsFlow.flatMapLatest { symbolsMap ->
             val symbols = symbolsMap.keys.joinToString(",")
-            val latestRatesFlow = currencyRepository.getLatestRates(base = base, symbols = symbols)
+            currencyRepository.getLatestRates(base = base, symbols = symbols)
+        }
 
-            combine(latestRatesFlow, favoritesFlow) { rates, favorites ->
-                rates.values.map {
-                    CurrencyExchangePairWithFavorite(
-                        from = it.from,
-                        to = it.to,
-                        rate = it.rate,
-                        isFavorite = favorites.any { favorite ->
-                            favorite.from == it.from && favorite.to == it.to
-                        }
-                    )
-                }
+        return combine(ratesFlow, favoritesFlow) { rates, favorites ->
+            rates.values.map { currencyExchangePair ->
+                CurrencyExchangePairWithFavorite(
+                    from = currencyExchangePair.from,
+                    to = currencyExchangePair.to,
+                    rate = currencyExchangePair.rate,
+                    isFavorite = favorites.any { favorite ->
+                        favorite.from == currencyExchangePair.from && favorite.to == currencyExchangePair.to
+                    }
+                )
             }
         }.catch {
             emit(emptyList())
