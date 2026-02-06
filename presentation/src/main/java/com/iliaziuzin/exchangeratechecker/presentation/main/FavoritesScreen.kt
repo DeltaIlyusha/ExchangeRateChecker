@@ -37,8 +37,8 @@ fun FavoritesScreenPreview() {
     FavoritesScreen(
         uiState = MainUiState(
             favorites = listOf(
-                UiCurrencyExchangePair("USD", "RUB", 1.0, false),
-                UiCurrencyExchangePair("USD","USD", 1.0, false)
+                UiCurrencyExchangePair("USD", "RUB", "1.0", false),
+                UiCurrencyExchangePair("USD","USD", "1.0", false)
             )
         ),
         onRemoveFavorite = {}

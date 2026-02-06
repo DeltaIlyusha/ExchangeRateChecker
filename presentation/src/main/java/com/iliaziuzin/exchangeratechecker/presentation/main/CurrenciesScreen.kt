@@ -39,8 +39,8 @@ fun CurrenciesScreen(
                         SortOption.RATE_DESC -> uiState.currencyExchangePairs.sortedByDescending { it.rate }
                     }
 
-                    items(items = sortedSymbols, key = { it.to }) { (code, name) ->
-                        CurrencyComposable(code = code, rate = "0.0", isFavorite = false, onFavoriteClick = {})
+                    items(items = sortedSymbols, key = { it.to }) { it ->
+                        CurrencyComposable(code = it.to, rate = it.rate, isFavorite = it.isFavorite, onFavoriteClick = {onFavoriteClick(it)})
                     }
                 }
             }
@@ -57,9 +57,9 @@ fun CurrenciesScreenPreview() {
     CurrenciesScreen(
         uiState = MainUiState(
             currencyExchangePairs = listOf(
-                UiCurrencyExchangePair("USD", "RUB", 1.0, true),
-                UiCurrencyExchangePair("EUR", "RUB", 1.0, false),
-                UiCurrencyExchangePair("RUB", "USD", 1.0, false),
+                UiCurrencyExchangePair("USD", "RUB", "1.0", true),
+                UiCurrencyExchangePair("EUR", "RUB", "1.0", false),
+                UiCurrencyExchangePair("RUB", "USD", "1.0", false),
             ),
         ),
         onFavoriteClick = {},

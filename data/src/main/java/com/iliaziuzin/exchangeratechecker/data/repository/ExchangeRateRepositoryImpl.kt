@@ -24,16 +24,14 @@ class ExchangeRateRepositoryImpl @Inject constructor(
         val favoritesFlow = favoriteRepository.getFavorites()
 
         return combine(latestRatesFlow, favoritesFlow) { rates, favorites ->
-            val favoritePairs = favorites.map { it.from to it.to }
-            rates.values.filter { (it.from to it.to) in favoritePairs }
-                .map {
-                    CurrencyExchangePairWithFavorite(
-                        from = it.from,
-                        to = it.to,
-                        rate = it.rate,
-                        isFavorite = true
-                    )
-                }
+            favorites.map {
+                CurrencyExchangePairWithFavorite(
+                    from = it.from,
+                    to = it.to,
+                    rate = 0.0,
+                    isFavorite = true
+                )
+            }
         }.catch {
             emit(emptyList())
         }.flowOn(Dispatchers.IO)

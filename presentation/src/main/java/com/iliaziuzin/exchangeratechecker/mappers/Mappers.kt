@@ -16,7 +16,7 @@ fun CurrencyExchangePairWithFavorite.toCurrencyExchangePairItem(): UiCurrencyExc
     return UiCurrencyExchangePair(
         from = from,
         to = to,
-        rate = rate,
+        rate = rate.toString(),
         isFavorite = isFavorite
     )
 }
