@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,6 +55,7 @@ import com.iliaziuzin.exchangeratechecker.presentation.R
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.CurrencyComposable
 import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundDefault
 import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundHeader
+import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
 import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Secondary
 
@@ -86,14 +88,16 @@ fun CurrenciesScreen(
                     CircularProgressIndicator(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.BackgroundDefault)
-                            .wrapContentSize()
+                            .wrapContentSize(),
+                        trackColor = MaterialTheme.colorScheme.Primary,
+
                     )
                 }
             } else if (uiState.error != null) {
                 Text(text = "Error: ${uiState.error}")
             } else {
                 LazyColumn(
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                    contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     val sortedSymbols = when (uiState.sortOption) {
@@ -131,12 +135,12 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Currencies",
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 16.dp),
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 10.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(18.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -204,7 +208,7 @@ fun CurrenciesHeader(modifier: Modifier = Modifier,
                     }
                 }
                 Spacer(modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.fillMaxWidth().size(1.dp).background(color = MaterialTheme.colorScheme.Secondary))
+                Spacer(modifier = Modifier.fillMaxWidth().size(1.dp).background(color = MaterialTheme.colorScheme.Outline))
             }
 
         }

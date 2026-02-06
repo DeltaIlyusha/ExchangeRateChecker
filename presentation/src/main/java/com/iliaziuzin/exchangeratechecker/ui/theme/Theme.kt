@@ -90,3 +90,10 @@ get() = BgHeader
 val ColorScheme.OnPrimary: Color@Composable
 get() = MainOnPrimary
 
+val ColorScheme.Outline: Color@Composable
+get() = MainOutline
+
+val ColorScheme.LightPrimary: Color@Composable
+get() = MainLightPrimary
+
+

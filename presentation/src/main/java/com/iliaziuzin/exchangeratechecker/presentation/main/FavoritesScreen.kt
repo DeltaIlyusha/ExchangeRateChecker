@@ -1,8 +1,14 @@
 package com.iliaziuzin.exchangeratechecker.presentation.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -15,19 +21,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.CurrencyComposable
+import com.iliaziuzin.exchangeratechecker.presentation.main.composable.SimpleScreenHeader
+import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundHeader
+import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
 
 @Composable
-fun FavoritesScreen(uiState: MainUiState, onRemoveFavorite: (UiCurrencyExchangePair) -> Unit) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            text = "Favorites",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
+fun FavoritesScreen(modifier:Modifier = Modifier, uiState: MainUiState, onRemoveFavorite: (UiCurrencyExchangePair) -> Unit) {
+    Column(modifier = modifier.fillMaxSize()) {
+        SimpleScreenHeader(
+            title = "Favorites"
         )
+
         if (uiState.favorites.isEmpty()) {
             Text("No favorites yet.")
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(uiState.favorites, key = { it.from + it.to }) {
                     item ->
                     CurrencyComposable(
