@@ -28,11 +28,12 @@ fun FavoritesScreen(uiState: MainUiState, onRemoveFavorite: (UiCurrencyExchangeP
             Text("No favorites yet.")
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(uiState.favorites) { item ->
+                items(uiState.favorites, key = { it.from + it.to }) {
+                    item ->
                     CurrencyComposable(
-                        code = item.to,
+                        code = "${item.from}/${item.to}",
                         rate = item.rate,
-                        isFavorite = true,
+                        isFavorite = item.isFavorite,
                         onFavoriteClick = { onRemoveFavorite(item) }
                     )
                 }

@@ -1,4 +1,4 @@
-package com.iliaziuzin.exchangeratechecker.data.local
+package com.iliaziuzin.exchangeratechecker.local
 
 import androidx.room.Entity
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyCode

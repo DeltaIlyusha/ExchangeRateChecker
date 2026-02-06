@@ -1,4 +1,4 @@
-package com.iliaziuzin.exchangeratechecker.data.repository
+package com.iliaziuzin.exchangeratechecker.repository
 
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyCode
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyExchangePair

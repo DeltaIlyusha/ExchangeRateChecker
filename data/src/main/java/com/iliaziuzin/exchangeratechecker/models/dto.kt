@@ -1,4 +1,4 @@
-package com.iliaziuzin.exchangeratechecker.data.models
+package com.iliaziuzin.exchangeratechecker.models
 
 import kotlinx.serialization.Serializable
 

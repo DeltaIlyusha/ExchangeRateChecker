@@ -4,8 +4,8 @@ import com.iliaziuzin.exchangeratechecker.domain.repository.ExchangeRateReposito
 import javax.inject.Inject
 
 
-class GetLatestRatesForCurrency @Inject constructor(
+class GetFavoritesWithLatestRatesUseCase @Inject constructor(
     private val repository: ExchangeRateRepository
 ) {
-    operator fun invoke(base: String = "USD") = repository.getLatestRatesForCurrency(base)
+    operator fun invoke() = repository.getRatesForFavorites()
 }

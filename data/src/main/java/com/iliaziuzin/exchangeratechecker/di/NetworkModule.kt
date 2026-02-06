@@ -1,8 +1,8 @@
 package com.iliaziuzin.exchangeratechecker.di
 
 import com.iliaziuzin.exchangeratechecker.data.BuildConfig
-import com.iliaziuzin.exchangeratechecker.data.remote.ApiService
-import com.iliaziuzin.exchangeratechecker.data.remote.AuthInterceptor
+import com.iliaziuzin.exchangeratechecker.remote.ApiService
+import com.iliaziuzin.exchangeratechecker.remote.AuthInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

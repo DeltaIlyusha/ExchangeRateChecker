@@ -1,6 +1,6 @@
-package com.iliaziuzin.exchangeratechecker.data.repository
+package com.iliaziuzin.exchangeratechecker.repository
 
-import com.iliaziuzin.exchangeratechecker.data.remote.ApiService
+import com.iliaziuzin.exchangeratechecker.remote.ApiService
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyCode
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.domain.repository.CurrencyRepository

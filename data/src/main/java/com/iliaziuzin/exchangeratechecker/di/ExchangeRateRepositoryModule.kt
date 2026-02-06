@@ -1,6 +1,6 @@
-package com.iliaziuzin.exchangeratechecker.data.di
+package com.iliaziuzin.exchangeratechecker.di
 
-import com.iliaziuzin.exchangeratechecker.data.repository.ExchangeRateRepositoryImpl
+import com.iliaziuzin.exchangeratechecker.repository.ExchangeRateRepositoryImpl
 import com.iliaziuzin.exchangeratechecker.domain.repository.ExchangeRateRepository
 import dagger.Binds
 import dagger.Module
@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+abstract class ExchangeRateRepositoryModule {
 
     @Binds
     @Singleton

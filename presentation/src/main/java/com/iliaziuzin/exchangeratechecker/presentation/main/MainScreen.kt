@@ -29,6 +29,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     val tabs = listOf("Currencies", "Favorites")
     val navController = rememberNavController()
 
+
     ExchangeRateCheckerTheme {
         Scaffold(
             bottomBar = {
@@ -60,6 +61,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                                 CurrenciesScreen(
                                     uiState = uiState,
                                     onFavoriteClick = viewModel::addFavorite,
+                                    onCurrencySelected = viewModel::onCurrencySelected,
                                     onSortClick = { navController.navigate("filters") }
                                 )
                             }

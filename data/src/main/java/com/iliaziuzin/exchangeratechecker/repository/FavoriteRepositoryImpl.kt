@@ -1,8 +1,8 @@
-package com.iliaziuzin.exchangeratechecker.data.repository
+package com.iliaziuzin.exchangeratechecker.repository
 
-import com.iliaziuzin.exchangeratechecker.data.local.FavoriteCurrencyPairDao
-import com.iliaziuzin.exchangeratechecker.data.toFavoriteCurrenciesPair
-import com.iliaziuzin.exchangeratechecker.data.toFavoriteCurrencyPairEntity
+import com.iliaziuzin.exchangeratechecker.local.FavoriteCurrencyPairDao
+import com.iliaziuzin.exchangeratechecker.toFavoriteCurrenciesPair
+import com.iliaziuzin.exchangeratechecker.toFavoriteCurrencyPairEntity
 import com.iliaziuzin.exchangeratechecker.domain.models.FavoriteCurrenciesPair
 import com.iliaziuzin.exchangeratechecker.domain.repository.FavoriteRepository
 import kotlinx.coroutines.Dispatchers

@@ -1,6 +1,6 @@
-package com.iliaziuzin.exchangeratechecker.data
+package com.iliaziuzin.exchangeratechecker
 
-import com.iliaziuzin.exchangeratechecker.data.local.FavoriteCurrencyPairEntity
+import com.iliaziuzin.exchangeratechecker.local.FavoriteCurrencyPairEntity
 import com.iliaziuzin.exchangeratechecker.domain.models.FavoriteCurrenciesPair
 
 fun FavoriteCurrenciesPair.toFavoriteCurrencyPairEntity():FavoriteCurrencyPairEntity {

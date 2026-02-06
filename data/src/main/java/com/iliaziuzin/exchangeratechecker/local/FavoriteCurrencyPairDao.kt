@@ -1,4 +1,4 @@
-package com.iliaziuzin.exchangeratechecker.data.local
+package com.iliaziuzin.exchangeratechecker.local
 
 import androidx.room.Dao
 import androidx.room.Delete

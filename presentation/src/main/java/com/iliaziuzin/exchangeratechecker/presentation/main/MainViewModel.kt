@@ -4,19 +4,17 @@ import com.iliaziuzin.exchangeratechecker.domain.usecase.RemoveFavoriteUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iliaziuzin.exchangeratechecker.domain.usecase.AddFavoriteUseCase
-import com.iliaziuzin.exchangeratechecker.domain.usecase.GetFavoritesWithLatestRates
-import com.iliaziuzin.exchangeratechecker.domain.usecase.GetLatestRatesForCurrency
+import com.iliaziuzin.exchangeratechecker.domain.usecase.GetCurrenciesUseCase
+import com.iliaziuzin.exchangeratechecker.domain.usecase.GetFavoritesWithLatestRatesUseCase
+import com.iliaziuzin.exchangeratechecker.domain.usecase.GetLatestRatesForCurrencyUseCase
 import com.iliaziuzin.exchangeratechecker.mappers.toCurrencyExchangePairItem
 import com.iliaziuzin.exchangeratechecker.mappers.toFavoriteCurrenciesPair
 import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,8 +28,9 @@ enum class SortOption(val displayName: String) {
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getFavoritesWithLatestRates: GetFavoritesWithLatestRates,
-    private val getLatestRatesForCurrency: GetLatestRatesForCurrency,
+    private val getCurrenciesUseCase: GetCurrenciesUseCase,
+    private val getFavoritesWithLatestRatesUseCase: GetFavoritesWithLatestRatesUseCase,
+    private val getLatestRatesForCurrency: GetLatestRatesForCurrencyUseCase,
     private val addFavoriteUseCase: AddFavoriteUseCase,
     private val removeFavoriteUseCase: RemoveFavoriteUseCase
 ) : ViewModel() {
@@ -41,7 +40,8 @@ class MainViewModel @Inject constructor(
 
 
     init {
-        loadRatesForCurrencies()
+        loadAvailableCurrencies()
+        loadRatesForCurrencies(_uiState.value.selectedCurrency)
         loadRatesForFavorites()
     }
 
@@ -49,15 +49,31 @@ class MainViewModel @Inject constructor(
         _uiState.update { it.copy(sortOption = sortOption) }
     }
 
-    private fun loadRatesForFavorites() {
-        getFavoritesWithLatestRates().onEach { favorites ->
-            _uiState.update { it.copy(favorites = favorites.map { favorite -> favorite.toCurrencyExchangePairItem() }) }
+    fun onCurrencySelected(currency: String) {
+        _uiState.update { it.copy(selectedCurrency = currency, isLoading = true) }
+        loadRatesForCurrencies(currency)
+    }
+
+    private fun loadAvailableCurrencies() {
+        getCurrenciesUseCase().onEach { currencies ->
+            _uiState.update {
+                it.copy(
+                    currencySymbols = currencies.keys.toList(),
+                    isLoading = false
+                )
+            }
         }.launchIn(viewModelScope)
     }
 
-    private fun loadRatesForCurrencies() {
-        getLatestRatesForCurrency().onEach { currencies ->
-            _uiState.update { it.copy(currencyExchangePairs = currencies.map { currency -> currency.toCurrencyExchangePairItem() }) }
+    private fun loadRatesForFavorites() {
+        getFavoritesWithLatestRatesUseCase().onEach { favorites ->
+            _uiState.update { it.copy(isLoading = false, favorites = favorites.map { favorite -> favorite.toCurrencyExchangePairItem() }) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun loadRatesForCurrencies(baseCurrency:String) {
+        getLatestRatesForCurrency(baseCurrency).onEach { currencies ->
+            _uiState.update { it.copy(isLoading = false, currencyExchangePairs = currencies.map { currency -> currency.toCurrencyExchangePairItem() }) }
         }.launchIn(viewModelScope)
     }
 
@@ -76,7 +92,9 @@ class MainViewModel @Inject constructor(
 }
 
 data class MainUiState(
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
+    val currencySymbols:List<String> = emptyList(),
+    val selectedCurrency:String = "EUR",
     val currencyExchangePairs: List<UiCurrencyExchangePair> = emptyList(),
     val favorites: List<UiCurrencyExchangePair> = emptyList(),
     val error: String? = null,

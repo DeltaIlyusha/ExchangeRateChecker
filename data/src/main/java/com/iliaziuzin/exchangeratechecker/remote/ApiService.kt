@@ -1,8 +1,8 @@
-package com.iliaziuzin.exchangeratechecker.data.remote
+package com.iliaziuzin.exchangeratechecker.remote
 
-import com.iliaziuzin.exchangeratechecker.data.models.CurrencyCodeDto
-import com.iliaziuzin.exchangeratechecker.data.models.LatestRatesResponse
-import com.iliaziuzin.exchangeratechecker.data.models.SymbolsResponse
+import com.iliaziuzin.exchangeratechecker.models.CurrencyCodeDto
+import com.iliaziuzin.exchangeratechecker.models.LatestRatesResponse
+import com.iliaziuzin.exchangeratechecker.models.SymbolsResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

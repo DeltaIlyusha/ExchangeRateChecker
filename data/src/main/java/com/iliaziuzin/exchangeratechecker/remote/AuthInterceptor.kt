@@ -1,4 +1,4 @@
-package com.iliaziuzin.exchangeratechecker.data.remote
+package com.iliaziuzin.exchangeratechecker.remote
 
 import okhttp3.Interceptor
 import okhttp3.Response
