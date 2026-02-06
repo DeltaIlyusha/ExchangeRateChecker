@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -48,7 +49,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEachIndexed
 import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.presentation.R
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.CurrencyComposable
@@ -196,8 +196,8 @@ fun CurrenciesHeader(
                         anchorSize = textFieldSize,
                         anchorPosition = textFieldPosition
                     ) {
-                        Column {
-                            currencySymbols.fastForEachIndexed { index, symbol ->
+                        LazyColumn {
+                            itemsIndexed(currencySymbols) { index, symbol ->
                                 DropdownMenuItem(
                                     modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundDefault),
                                     trailingIcon = {

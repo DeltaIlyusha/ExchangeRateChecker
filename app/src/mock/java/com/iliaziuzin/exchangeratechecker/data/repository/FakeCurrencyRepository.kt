@@ -16,6 +16,10 @@ class FakeCurrencyRepository @Inject constructor() : CurrencyRepository {
         "JPY" to "Japanese Yen",
         "RUB" to "Russian Ruble",
         "USD" to "United States Dollar",
+        "GBP" to "British Pound Sterling",
+        "AUD" to "Australian Dollar",
+        "CAD" to "Canadian Dollar",
+
     )
 
     override fun getSymbols(): Flow<Map<CurrencyCode, String>> = flow {

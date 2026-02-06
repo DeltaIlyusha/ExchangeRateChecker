@@ -60,8 +60,10 @@ class CurrenciesViewModel @Inject constructor(
         loadRatesForCurrencies(currency)
     }
 
+    var loadAvailableCurrencies: Job? = null
     private fun loadAvailableCurrencies() {
-        getCurrenciesUseCase().onEach { currencies ->
+        loadAvailableCurrencies?.cancel()
+        loadAvailableCurrencies = getCurrenciesUseCase().onEach { currencies ->
             _uiState.update {
                 it.copy(
                     currencySymbols = currencies.keys.toList(),
