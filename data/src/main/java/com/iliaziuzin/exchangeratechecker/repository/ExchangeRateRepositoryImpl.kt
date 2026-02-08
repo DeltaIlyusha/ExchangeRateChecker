@@ -9,7 +9,6 @@ import com.iliaziuzin.exchangeratechecker.domain.repository.ExchangeRateReposito
 import com.iliaziuzin.exchangeratechecker.domain.repository.FavoriteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -37,8 +36,8 @@ class ExchangeRateRepositoryImpl @Inject constructor(
             }
 
             combine(favoriteRateFlows) { rateMapsArray ->
-                rateMapsArray.flatMap { ratesMap ->
-                    ratesMap.values.map { currencyExchangePair ->
+                rateMapsArray.flatMap { it.values }
+                    .map { currencyExchangePair ->
                         CurrencyExchangePairWithFavorite(
                             from = currencyExchangePair.from,
                             to = currencyExchangePair.to,
@@ -46,10 +45,7 @@ class ExchangeRateRepositoryImpl @Inject constructor(
                             isFavorite = true
                         )
                     }
-                }
             }
-        }.catch {
-            emit(emptyList())
         }.flowOn(Dispatchers.IO)
     }
 
@@ -74,8 +70,6 @@ class ExchangeRateRepositoryImpl @Inject constructor(
                     }
                 )
             }
-        }.catch {
-            emit(emptyList())
         }.flowOn(Dispatchers.IO)
     }
 }
