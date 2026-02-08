@@ -2,6 +2,7 @@ package com.iliaziuzin.exchangeratechecker.presentation.main.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,17 +18,13 @@ import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
 
 
 @Composable
-fun SimpleScreenHeader(modifier: Modifier = Modifier, title:String)
+fun SimpleScreenHeader(modifier: Modifier = Modifier, paddingValues: PaddingValues = PaddingValues.Zero, title:String)
 
 {
     Column(
-        modifier = modifier.background(MaterialTheme.colorScheme.BackgroundHeader)
+        modifier = modifier
     ) {
-        Text(
-            text = "Favorites",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 10.dp)
-        )
+        ScreenTitleComposable(text = "Favorites")
 
         Spacer(modifier = Modifier.size(16.dp))
         Spacer(modifier = Modifier.fillMaxWidth().size(1.dp).background(color = MaterialTheme.colorScheme.Outline))
@@ -38,6 +35,7 @@ fun SimpleScreenHeader(modifier: Modifier = Modifier, title:String)
 @Composable
 fun SimpleScreenHeaderPreview() {
     SimpleScreenHeader(
+        paddingValues = PaddingValues(16.dp),
         title = "Favorites"
     )
 }

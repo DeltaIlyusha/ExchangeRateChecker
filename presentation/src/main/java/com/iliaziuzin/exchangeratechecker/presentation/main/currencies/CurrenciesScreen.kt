@@ -1,4 +1,4 @@
-package com.iliaziuzin.exchangeratechecker.presentation.main
+package com.iliaziuzin.exchangeratechecker.presentation.main.currencies
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -28,6 +28,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -53,6 +54,7 @@ import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
 import com.iliaziuzin.exchangeratechecker.presentation.R
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.CurrencyComposable
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.PositionedDropdownMenu
+import com.iliaziuzin.exchangeratechecker.presentation.main.composable.ScreenTitleComposable
 import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundDefault
 import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundHeader
 import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
@@ -74,7 +76,7 @@ fun CurrenciesScreen(
     Scaffold(modifier = modifier.background(MaterialTheme.colorScheme.BackgroundDefault)) { paddingValues ->
         Column(modifier = Modifier.fillMaxSize()) {
             CurrenciesHeader(
-                modifier = Modifier.padding(paddingValues),
+                modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundHeader).padding(top = paddingValues.calculateTopPadding()),
                 selectedCurrency = uiState.selectedCurrency,
                 currencySymbols = uiState.currencySymbols,
                 onSortClick = onSortClick,
@@ -99,7 +101,12 @@ fun CurrenciesScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundDefault).weight(1f),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = paddingValues.calculateBottomPadding() + 16.dp
+                    ),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(items = uiState.currencyExchangePairs, key = { it.key }) { it ->
@@ -126,14 +133,12 @@ fun CurrenciesHeader(
     onCurrencySelected: (String) -> Unit
 ) {
     Box(
-        Modifier.background(MaterialTheme.colorScheme.BackgroundHeader)
+        modifier
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Currencies",
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 10.dp),
-                style = MaterialTheme.typography.titleLarge
-            )
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ScreenTitleComposable(text = "Currencies")
 
             Row(
                 modifier = Modifier

@@ -20,7 +20,7 @@ val Typography = Typography(
         fontFamily = interFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
-        lineHeight = 22.sp,
+        lineHeight = 28.sp,
         letterSpacing = 0.sp,
         color = MainTextDefault
     ),

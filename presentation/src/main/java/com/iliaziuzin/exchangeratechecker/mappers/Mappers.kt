@@ -3,7 +3,7 @@ package com.iliaziuzin.exchangeratechecker.mappers
 import com.iliaziuzin.exchangeratechecker.domain.models.CurrencyExchangePairWithFavorite
 import com.iliaziuzin.exchangeratechecker.domain.models.FavoriteCurrenciesPair
 import com.iliaziuzin.exchangeratechecker.models.UiCurrencyExchangePair
-import java.text.DecimalFormat
+
 
 
 fun UiCurrencyExchangePair.toFavoriteCurrenciesPair(): FavoriteCurrenciesPair {

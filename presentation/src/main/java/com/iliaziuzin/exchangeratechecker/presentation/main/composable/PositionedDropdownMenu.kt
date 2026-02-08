@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
@@ -29,17 +30,19 @@ fun PositionedDropdownMenu(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val popupPositionProvider = object : PopupPositionProvider {
-        override fun calculatePosition(
-            anchorBounds: IntRect,
-            windowSize: IntSize,
-            layoutDirection: LayoutDirection,
-            popupContentSize: IntSize
-        ): IntOffset {
-            return IntOffset(
-                x = anchorPosition.x,
-                y = anchorPosition.y
-            )
+    val popupPositionProvider = remember(anchorPosition) {
+        object : PopupPositionProvider {
+            override fun calculatePosition(
+                anchorBounds: IntRect,
+                windowSize: IntSize,
+                layoutDirection: LayoutDirection,
+                popupContentSize: IntSize
+            ): IntOffset {
+                return IntOffset(
+                    x = anchorPosition.x,
+                    y = anchorPosition.y
+                )
+            }
         }
     }
 

@@ -5,5 +5,4 @@ data class CurrencyExchangePairWithFavorite(
     val to: CurrencyCode,
     val rate: Double,
     val isFavorite: Boolean,
-    val key: String = from + to
 )

@@ -3,16 +3,21 @@ package com.iliaziuzin.exchangeratechecker.presentation.main
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import com.iliaziuzin.exchangeratechecker.presentation.main.currencies.CurrenciesScreen
+import com.iliaziuzin.exchangeratechecker.presentation.main.currencies.CurrenciesViewModel
+import com.iliaziuzin.exchangeratechecker.presentation.main.favorites.FavoritesScreen
+import com.iliaziuzin.exchangeratechecker.presentation.main.favorites.FavoritesViewModel
+import com.iliaziuzin.exchangeratechecker.presentation.main.filters.FiltersScreen
 import kotlinx.coroutines.flow.collectLatest
 
 object AppDestinations {
@@ -34,7 +39,7 @@ fun AppNavHost(
     ) {
         composable(AppDestinations.CURRENCIES_ROUTE) {
             val viewModel: CurrenciesViewModel = hiltViewModel()
-            val uiState by viewModel.uiState.collectAsState()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             LaunchedEffect(Unit) {
                 viewModel.errorFlow.collectLatest { error ->
@@ -59,8 +64,8 @@ fun AppNavHost(
             val backStackEntry = remember(it) {
                 navController.getBackStackEntry(AppDestinations.CURRENCIES_ROUTE)
             }
-            val viewModel: CurrenciesViewModel = hiltViewModel(backStackEntry)
-            val uiState by viewModel.uiState.collectAsState()
+            val viewModel: CurrenciesViewModel = hiltViewModel (backStackEntry)
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             FiltersScreen(
                 currentSortOption = uiState.sortOption,
                 onSortOptionChange = viewModel::onSortOptionChange,
@@ -70,7 +75,7 @@ fun AppNavHost(
         }
         composable(AppDestinations.FAVORITES_ROUTE) {
             val viewModel: FavoritesViewModel = hiltViewModel()
-            val uiState by viewModel.uiState.collectAsState()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             LaunchedEffect(Unit) {
                 viewModel.errorFlow.collectLatest { error ->

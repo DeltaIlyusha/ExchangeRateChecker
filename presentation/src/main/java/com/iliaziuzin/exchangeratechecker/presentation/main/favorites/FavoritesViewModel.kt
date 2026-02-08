@@ -1,4 +1,4 @@
-package com.iliaziuzin.exchangeratechecker.presentation.main
+package com.iliaziuzin.exchangeratechecker.presentation.main.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

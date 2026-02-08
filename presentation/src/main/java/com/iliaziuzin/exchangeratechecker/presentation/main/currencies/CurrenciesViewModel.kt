@@ -1,4 +1,4 @@
-package com.iliaziuzin.exchangeratechecker.presentation.main
+package com.iliaziuzin.exchangeratechecker.presentation.main.currencies
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -56,6 +56,7 @@ class CurrenciesViewModel @Inject constructor(
     }
 
     fun onCurrencySelected(currency: String) {
+        if (currency == _uiState.value.selectedCurrency) return
         _uiState.update { it.copy(selectedCurrency = currency, isLoading = true) }
         loadRatesForCurrencies(currency)
     }
