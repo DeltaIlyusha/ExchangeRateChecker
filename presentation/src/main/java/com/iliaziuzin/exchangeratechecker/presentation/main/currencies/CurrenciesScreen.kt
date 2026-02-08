@@ -57,6 +57,7 @@ import com.iliaziuzin.exchangeratechecker.presentation.main.composable.Positione
 import com.iliaziuzin.exchangeratechecker.presentation.main.composable.ScreenTitleComposable
 import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundDefault
 import com.iliaziuzin.exchangeratechecker.ui.theme.BackgroundHeader
+import com.iliaziuzin.exchangeratechecker.ui.theme.LightPrimary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Outline
 import com.iliaziuzin.exchangeratechecker.ui.theme.Primary
 import com.iliaziuzin.exchangeratechecker.ui.theme.Secondary
@@ -204,7 +205,7 @@ fun CurrenciesHeader(
                         LazyColumn {
                             itemsIndexed(currencySymbols) { index, symbol ->
                                 DropdownMenuItem(
-                                    modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundDefault),
+                                    modifier = Modifier.background(if (symbol == selectedCurrency) MaterialTheme.colorScheme.LightPrimary else MaterialTheme.colorScheme.BackgroundDefault),
                                     trailingIcon = {
                                         if (index == 0) {
                                             Icon(

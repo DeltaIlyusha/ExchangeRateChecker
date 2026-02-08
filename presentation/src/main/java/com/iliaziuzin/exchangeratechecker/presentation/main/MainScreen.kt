@@ -2,11 +2,11 @@ package com.iliaziuzin.exchangeratechecker.presentation.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -50,64 +50,66 @@ fun MainScreen() {
 
     ExchangeRateCheckerTheme {
         Scaffold(
+            modifier = Modifier.fillMaxSize(),
             snackbarHost = { SnackbarHost(snackbarHostState) },
             bottomBar = {
                 if (showBottomBar) {
-                    NavigationBar {
-                        Column(Modifier.background(color = MaterialTheme.colorScheme.BackgroundDefault)) {
-                            Spacer(modifier = Modifier
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Spacer(
+                            modifier = Modifier
                                 .fillMaxWidth()
-                                .size(1.dp)
-                                .background(color = MaterialTheme.colorScheme.Outline))
-                            Row() {
-                                tabs.forEachIndexed { index, (title, route) ->
-                                    val selected = currentRoute == route
-                                    NavigationBarItem(
-                                        selected = selected,
-                                        onClick = {
-                                            navController.navigate(route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
+                                .height(1.dp)
+                                .background(color = MaterialTheme.colorScheme.Outline)
+                        )
+                        NavigationBar(
+                            containerColor = MaterialTheme.colorScheme.BackgroundDefault
+                        ) {
+                            tabs.forEach { (title, route) ->
+                                val selected = currentRoute == route
+                                NavigationBarItem(
+                                    selected = selected,
+                                    onClick = {
+                                        navController.navigate(route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
                                             }
-                                        },
-                                        label = {
-                                            Text(
-                                                text = title,
-                                                style = MaterialTheme.typography.labelSmall,
-                                            )
-                                        },
-                                        icon = {
-                                            val icon = when (index) {
-                                                0 -> if (selected) R.drawable.icon_currencies_on else R.drawable.icon_currencies_off
-                                                1 -> if (selected) R.drawable.icon_favorites_on else R.drawable.icon_favorites_off
-                                                else -> R.drawable.icon_favorites_off
-                                            }
-                                            Icon(painterResource(id = icon), contentDescription = title)
-                                        },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            indicatorColor = MaterialTheme.colorScheme.LightPrimary,
-                                            selectedIconColor = MaterialTheme.colorScheme.Primary,
-                                            selectedTextColor = MaterialTheme.colorScheme.TextDefault,
-                                            unselectedIconColor = MaterialTheme.colorScheme.Secondary,
-                                            unselectedTextColor = MaterialTheme.colorScheme.Secondary
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    },
+                                    label = {
+                                        Text(
+                                            text = title,
+                                            style = MaterialTheme.typography.labelSmall,
                                         )
+                                    },
+                                    icon = {
+                                        val icon = when (route) {
+                                            AppDestinations.CURRENCIES_ROUTE -> if (selected) R.drawable.icon_currencies_on else R.drawable.icon_currencies_off
+                                            AppDestinations.FAVORITES_ROUTE -> if (selected) R.drawable.icon_favorites_on else R.drawable.icon_favorites_off
+                                            else -> R.drawable.icon_favorites_off
+                                        }
+                                        Icon(painterResource(id = icon), contentDescription = title)
+                                    },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        indicatorColor = MaterialTheme.colorScheme.LightPrimary,
+                                        selectedIconColor = MaterialTheme.colorScheme.Primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.TextDefault,
+                                        unselectedIconColor = MaterialTheme.colorScheme.Secondary,
+                                        unselectedTextColor = MaterialTheme.colorScheme.Secondary
                                     )
-                                }
+                                )
                             }
                         }
-
                     }
                 }
-            }
+            },
         ) { innerPadding ->
-           AppNavHost(
-               navController = navController, 
-               snackbarHostState = snackbarHostState, 
-               modifier = Modifier
-           )
+            AppNavHost(
+                navController = navController,
+                snackbarHostState = snackbarHostState,
+                modifier = Modifier
+            )
         }
     }
 }

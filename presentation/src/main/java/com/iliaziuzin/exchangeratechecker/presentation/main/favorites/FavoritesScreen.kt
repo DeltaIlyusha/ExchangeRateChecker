@@ -30,7 +30,7 @@ import java.text.DecimalFormat
 
 @Composable
 fun FavoritesScreen(modifier:Modifier = Modifier, uiState: FavoritesUiState, onFavoriteClick: (UiCurrencyExchangePair) -> Unit) {
-    Scaffold(modifier = modifier.background(MaterialTheme.colorScheme.BackgroundDefault)) { paddingValues ->
+    Scaffold(modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundDefault)) { paddingValues ->
         Column(modifier = Modifier.fillMaxSize()) {
             SimpleScreenHeader(
                 modifier = Modifier.background(MaterialTheme.colorScheme.BackgroundHeader).padding(top = paddingValues.calculateTopPadding()),
